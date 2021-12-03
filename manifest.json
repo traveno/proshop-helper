@@ -1,0 +1,29 @@
+{
+  "name": "MSci Tag Generator",
+  "description": "Generates work order tags",
+  "version": "1.0",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "host_permissions": ["https://machinesciences.adionsystems.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://machinesciences.adionsystems.com/procnc/workorders/2021/*"],
+      "js": ["customButton.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["customButton.html", "jquery-3.0.0.min.js"],
+      "matches": ["https://machinesciences.adionsystems.com/*"]
+    }
+  ]
+}

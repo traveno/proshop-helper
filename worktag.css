@@ -1,0 +1,231 @@
+/* worktag.html */
+
+/* Define document size as a standard sheet of paper */
+html, body { height: 11in; width: 8.5in; padding: 0; margin: 0; } 
+
+#quad1,#quad2,#quad3,#quad4 {
+  width: 50%; 
+  height: 50%; 
+  float: left;
+}
+
+#qr-code1,#qr-code2,#qr-code3,#qr-code4 {
+  padding-top: 0.2in;
+}
+
+div {
+  padding:0em;
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+}
+
+/* ----------------------------------- */
+/* Start of code for part stock info   */
+/* ----------------------------------- */
+
+.left-justify {
+  text-align: left;
+}
+
+.right-justify {
+  text-align: right;
+}
+
+h3 {
+  margin-top: 12px;
+  margin-bottom: 0px;
+  font-size: 12pt;
+}
+
+.column p {
+  margin-top: 5px;
+  font-size: 12pt;
+}
+
+.column {
+  float: left;
+  width: 33%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.row {
+  margin-top: 0px;
+  margin-left: 0.07in;
+  width: 80%;
+}
+
+.partStockButton {
+  white-space: normal;
+}
+
+#floater {
+  top: 5.5in;
+  left: 4.25in;
+  position: absolute;
+}
+
+#floater-inner {
+  position: relative;
+
+  width: 300px;
+  margin-left: -150px;
+
+  height: 200px;
+  margin-top: -100px;
+
+  background-color: #fff;
+  border-radius: 10px;
+  border: thin dashed #000;
+}
+
+/* ----------------------------------- */
+/* End of code for part stock info     */
+/* ----------------------------------- */
+
+#loadingText {
+  font-size: 12pt;
+}
+
+
+.blurry {
+  filter: blur(10px);
+}
+
+.inner-quad {
+  margin: 0.2in;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 10px;
+  border-color: #FFF;
+  height: 5.1in;
+
+  box-shadow: inset 0px 0px 0px 2px #000;
+}
+
+.logo {
+  width: 60%;
+  padding-top: 0.3in;
+}
+
+.inner-quad h2 {
+  margin: 0;
+}
+
+p.work-order {
+  font-size: 60px;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  width: 75%;
+  padding-bottom: 0.0in;
+  margin: 0.0in 0 0.08in 0;
+}
+
+div.inner-quad h2 {
+  font-size: 24px;
+}
+
+.div {
+  border-top: 5px
+}
+
+/* ------------------------------------- */
+/* Start of code for cutting guide lines */
+/* ------------------------------------- */
+
+#quad1 {
+  border-right: thin dashed #777;
+}
+
+#quad3 {
+  border-right: thin dashed #777;
+  border-top: thin dashed #777;
+}
+
+#quad4 {
+  border-top: thin dashed #777;
+}
+
+/* ----------------------------------- */
+/* End of code for cutting guide lines */
+/* ----------------------------------- */
+
+/* ----------------------------------- */
+/* Loading spinner animation code      */
+/* courtesy https://loading.io/css/    */
+/* ----------------------------------- */
+
+.lds-grid {
+  margin-top: 50px;
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-grid div {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #999;
+  animation: lds-grid 1.2s linear infinite;
+}
+.lds-grid div:nth-child(1) {
+  top: 8px;
+  left: 8px;
+  animation-delay: 0s;
+}
+.lds-grid div:nth-child(2) {
+  top: 8px;
+  left: 32px;
+  animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(3) {
+  top: 8px;
+  left: 56px;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(4) {
+  top: 32px;
+  left: 8px;
+  animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(5) {
+  top: 32px;
+  left: 32px;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(6) {
+  top: 32px;
+  left: 56px;
+  animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(7) {
+  top: 56px;
+  left: 8px;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(8) {
+  top: 56px;
+  left: 32px;
+  animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(9) {
+  top: 56px;
+  left: 56px;
+  animation-delay: -1.6s;
+}
+@keyframes lds-grid {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
