@@ -14,7 +14,6 @@ function scrapeData() {
         return;
     }
     
-    console.log("Captured WO number " + woNumber);
     chrome.runtime.sendMessage({ type: "wo-number", data: woNumber });
 
     // Load up the part stock information for this WO number
@@ -39,8 +38,6 @@ function scrapeData() {
 
             fetch("https://machinesciences.adionsystems.com/procnc/purchaseorders/" + partStock_poNumber).then(res => res.text()).then(html => {
                 const poDoc = parser.parseFromString(html, "text/html");
-
-                console.log(partStock_poNumber);
 
                 // This is a little ridiculous so hopefully it never breaks
                 // There's probably a better way using jQuery but I can't seem to find a way to import the library into this content script
@@ -71,7 +68,6 @@ function scrapeData() {
                             lineWoNumber_iterate = lineWoNumber.firstChild;
 
                             do {
-                                console.log(lineWoNumber_iterate.innerHTML);
                                 if (lineWoNumber_iterate.innerHTML == woNumber) {
                                     // We found a match
                                     lineWoNumber = lineWoNumber_iterate;
@@ -86,11 +82,9 @@ function scrapeData() {
 
                         // Do we have a result?
                         if (lineWoNumber.innerHTML == woNumber) {
-                            console.log(woNumber + " is line item " + lineNumber + " on PO " + partStock_poNumber);
-
                             chrome.runtime.sendMessage({
                                 type: "partStockInfo",
-                                po: partStock_poNumber,
+                                po: partStock_poNumber.substring(0, 6),
                                 line: lineNumber,
                                 arrived: partStock_actualArrived,
                                 qty: partStock_actualQty

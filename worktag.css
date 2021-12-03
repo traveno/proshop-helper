@@ -1,7 +1,7 @@
 /* worktag.html */
 
 /* Define document size as a standard sheet of paper */
-html, body { height: 11in; width: 8.5in; padding: 0; margin: 0; } 
+html, body { height: 11in; width: 8.5in; padding: 0; margin: 0; font-family: Tahoma, sans-serif; } 
 
 #quad1,#quad2,#quad3,#quad4 {
   width: 50%; 
@@ -48,6 +48,18 @@ h3 {
   width: 33%;
 }
 
+#floater-inner .column {
+  width: 33%;
+}
+
+#floater-inner .row {
+  width: 100%;
+  margin-top: 10px;
+  margin-left: 0px;
+  padding-bottom: 10px;
+  border-bottom: thin dashed #000;
+}
+
 /* Clear floats after the columns */
 .row:after {
   content: "";
@@ -56,16 +68,19 @@ h3 {
 }
 
 .row {
-  margin-top: 0px;
+  margin-top: 10px;
   margin-left: 0.07in;
   width: 80%;
 }
 
 .partStockButton {
   white-space: normal;
+  margin-top: 5px;
+  margin-left: 10px;
 }
 
 #floater {
+  filter: drop-shadow(0px 0px 10px gray);
   top: 5.5in;
   left: 4.25in;
   position: absolute;
@@ -102,7 +117,7 @@ h3 {
   margin: 0.2in;
   border-style: solid;
   border-width: 2px;
-  border-radius: 10px;
+  border-radius: 20px;
   border-color: #FFF;
   height: 5.1in;
 
@@ -162,7 +177,7 @@ div.inner-quad h2 {
 /* ----------------------------------- */
 
 .lds-grid {
-  margin-top: 50px;
+  margin-top: 35px;
   display: inline-block;
   position: relative;
   width: 80px;
