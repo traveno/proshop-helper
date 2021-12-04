@@ -35,14 +35,14 @@ chrome.runtime.onMessage.addListener(
                 });
 
                 // Generate QR code
-                qrcode.makeCode("https://machinesciences.adionsystems.com/procnc/workorders/2021/" + request.data);
+                qrcode.makeCode("https://machinesciences.adionsystems.com/procnc/workorders/" + request.data);
 
                 // Set the correct WO#
                 document.getElementById("work-order" + i).innerHTML = request.data;
             }
 
             // Update the loading text to look fancy
-            document.getElementById("loadingText").innerHTML = "Searching part stock</br>and purchase orders...";
+            document.getElementById("loadingText").innerHTML = "Searching part stocks</br>and purchase orders...";
         }
 
         // We've completed our search. Display results

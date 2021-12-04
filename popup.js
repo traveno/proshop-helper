@@ -1,5 +1,5 @@
 // Initialize button for generating tag
-let generateTag = document.getElementById("generateTag");
+/*let generateTag = document.getElementById("generateTag");
 
 // Add event listener for generateTag button
 generateTag.addEventListener("click", async () => {
@@ -11,4 +11,4 @@ generateTag.addEventListener("click", async () => {
   });
 
   chrome.tabs.create({ url: "worktag.html"});
-});
+});*/
