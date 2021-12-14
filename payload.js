@@ -1,5 +1,5 @@
 // Run the payload after a 100ms delay
-setTimeout(scrapeData, 100);
+setTimeout(scrapeData, 200);
 
 // Keep track of how many part stocks there are
 // and how many we have looked at
@@ -26,11 +26,7 @@ function scrapeData() {
         let partStockInfos = htmlDoc.getElementsByClassName("dashedTable");
         numPartStocks = partStockInfos.length;
 
-        // For special cases where a WO has no part stock
-        // Thanks to Chris L. and 21-1015 for finding this special case
-        if (numPartStocks == 0) {
-            
-        }
+        console.log(numPartStocks);
 
         for (let i = 0; i < partStockInfos.length; i++) {
             // PO number
@@ -49,6 +45,7 @@ function scrapeData() {
                 // If we have trouble reading the part stock information, finish the search and return
                 // i.e. for Customer Supplied Material, there is no PO# in the part stock information
                 // Thanks to Chris L. and 21-1015 for helping me discover this bug
+                console.log("Part stock info is missing information");
                 chrome.runtime.sendMessage({ type: "finishedSearch" }); 
                 return;
             }
@@ -72,8 +69,17 @@ function scrapeData() {
                 do {
                     // Limit our search to only <tr> elements
                     if (poLineInfos_iterate.tagName == "TR") {
-                        // Line number of row within the purchase order
+                        // Grab the line number from the current row
                         let lineNumber = parseInt(poLineInfos_iterate.childNodes[0].innerHTML);
+
+                        // Sometimes the line number is highlighted in yellow and therefore
+                        // embedded into a further child. This is how we check for that.
+                        // For example, lines that are marked FBS appear to be highlighted yellow.
+                        if (poLineInfos_iterate.childNodes[0].hasChildNodes()) {
+                            if (poLineInfos_iterate.childNodes[0].childNodes[0].hasChildNodes()) {
+                                lineNumber = parseInt(poLineInfos_iterate.childNodes[0].childNodes[0].innerHTML);
+                            }
+                        }
 
                         // If the <tr> does not contain a number, skip to next candidate
                         if (isNaN(lineNumber)) {
@@ -104,8 +110,11 @@ function scrapeData() {
                         
                         // Do we have a result?
                         if (lineWoNumber.innerHTML == woNumber) {
+                            console.log("We found a match");
                             chrome.runtime.sendMessage({
                                 type: "partStockInfo",
+                                // We get a substring of the PO# to prevent sending extra text...
+                                // 213XXX-Pre-Cut is a good example
                                 po: partStock_poNumber.substring(0, 6),
                                 line: lineNumber,
                                 arrived: partStock_actualArrived,

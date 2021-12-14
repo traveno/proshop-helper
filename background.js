@@ -1,7 +1,7 @@
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
 
-    if (request.type === "generateTag") {
+    if (request.type == "generateTag") {
         getCurrentTab().then(function(data) {
 
             chrome.scripting.executeScript({

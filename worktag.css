@@ -1,5 +1,12 @@
 /* worktag.html */
 
+/* ----------------------------------- */
+/* Start of high level and global css  */
+/* ----------------------------------- */
+
+/* Secret option? */
+@page { margin: 0; }
+
 /* Define document size as a standard sheet of paper */
 html, body { height: 11in; width: 8.5in; padding: 0; margin: 0; font-family: Tahoma, sans-serif; } 
 
@@ -10,7 +17,7 @@ html, body { height: 11in; width: 8.5in; padding: 0; margin: 0; font-family: Tah
 }
 
 #qr-code1,#qr-code2,#qr-code3,#qr-code4 {
-  padding-top: 0.2in;
+  padding: 0.2in 0 0.1in 0;
 }
 
 div {
@@ -20,68 +27,82 @@ div {
   -webkit-box-sizing:border-box;
 }
 
+.unselectable {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.blurry {
+  filter: blur(10px);
+}
+
+/* ----------------------------------- */
+/* End of high level and global css    */
+/* ----------------------------------- */
+
 /* ----------------------------------- */
 /* Start of code for part stock info   */
 /* ----------------------------------- */
-
-.left-justify {
-  text-align: left;
-}
-
-.right-justify {
-  text-align: right;
-}
 
 h3 {
   margin-top: 12px;
   margin-bottom: 0px;
   font-size: 12pt;
+  font-weight: bold;
 }
 
-.column p {
-  margin-top: 5px;
+h2 {
+  font-weight: bold;
+}
+
+.part-stock-info p {
   font-size: 12pt;
+  margin: 5px 0 0 0;
 }
 
-.column {
-  float: left;
-  width: 33%;
+.right-align {
+  text-align: right;
 }
 
-#floater-inner .column {
-  width: 33%;
-}
-
-#floater-inner .row {
-  width: 100%;
-  margin-top: 10px;
-  margin-left: 0px;
-  padding-bottom: 10px;
-  border-bottom: thin dashed #000;
+.left-align {
+  text-align: left;
 }
 
 /* Clear floats after the columns */
-.row:after {
+.custom-row:after {
   content: "";
   display: table;
   clear: both;
 }
 
-.row {
+.custom-row {
   padding-top: 0px;
-  margin-top: 10px;
-  margin-left: 0.07in;
+  margin: 0px;
   width: 80%;
 }
 
+.custom-column {
+  float: left;
+  width: 33%;
+}
+
+/* ----------------------------------- */
+/* End of code for part stock info     */
+/* ----------------------------------- */
+
+/* ----------------------------------- */
+/* Start of code for floating window   */
+/* ----------------------------------- */
+
 .partStockButton {
-  white-space: normal;
-  margin-top: 5px;
   margin-left: 10px;
 }
 
 #floater {
-  filter: drop-shadow(0px 0px 10px gray);
   top: 5.5in;
   left: 4.25in;
   position: absolute;
@@ -90,35 +111,49 @@ h3 {
 #floater-inner {
   position: relative;
 
-  width: 300px;
-  margin-left: -150px;
+  width: 400px;
+  margin-left: -200px;
+  margin-top: -100%;
 
-  height: 200px;
-  margin-top: -100px;
+  padding: 0 5px 0 5px;
 
   background-color: #fff;
   border-radius: 10px;
   border: thin dashed #000;
 }
 
-/* ----------------------------------- */
-/* End of code for part stock info     */
-/* ----------------------------------- */
+#floater-inner p {
+  font-size: 12pt;
+  margin: 10px 0 10px 0;
+}
+
+#floater-inner .custom-column {
+  width: 33%;
+}
+
+#floater-inner .custom-row {
+  width: 100%;
+  border-bottom: thin dashed #000;
+}
 
 #loadingText {
   font-size: 12pt;
+  padding-bottom: 20px;
 }
 
+/* ----------------------------------- */
+/* End of code for floating window     */
+/* ----------------------------------- */
 
-.blurry {
-  filter: blur(10px);
-}
+/* ----------------------------------- */
+/* Start of code for work tags         */
+/* ----------------------------------- */
 
 .inner-quad {
   margin: 0.2in;
-  border-style: solid;
-  border-width: 2px;
   border-radius: 20px;
+  border-style: solid;
+  border-width: 5px;
   border-color: #FFF;
   height: 5.1in;
 
@@ -141,19 +176,20 @@ p.work-order {
   width: 75%;
   padding-bottom: 0.0in;
   margin: 0.0in 0 0.08in 0;
+  line-height: 1.25;
 }
 
 div.inner-quad h2 {
   font-size: 24px;
 }
 
-.div {
-  border-top: 5px
-}
+/* ----------------------------------- */
+/* End of code for work tags           */
+/* ----------------------------------- */
 
-/* ------------------------------------- */
-/* Start of code for cutting guide lines */
-/* ------------------------------------- */
+/* ----------------------------------- */
+/* Start of code for cutting guide     */
+/* ----------------------------------- */
 
 #quad1 {
   border-right: thin dashed #777;
@@ -169,7 +205,7 @@ div.inner-quad h2 {
 }
 
 /* ----------------------------------- */
-/* End of code for cutting guide lines */
+/* End of code for cutting guide       */
 /* ----------------------------------- */
 
 /* ----------------------------------- */

@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener(
                 line: request.line,
                 arrived: request.arrived,
                 qty: request.qty
-            });   
+            });
         }
 
         // Is this an incoming WO# from our scraper?
@@ -57,17 +57,17 @@ function createPartStockButtons() {
     // Delete the loading text and animation
     $("#floater-inner").empty();
 
+    $("#floater-inner").append("<div class=\"custom-row\"><center><p class=\"unselectable\">Create ProShop worktag</p></center></div>");
+
     // Populate floating window with part stock options
     for (const info of partStockInfos) {
-
-
         $("#floater-inner").append(`
-        <div class="row">
-            <div class="column">
-                <button class="partStockButton" id="` + info.po + `">Select</button>
+        <div class="custom-row valign-wrapper">
+            <div class="custom-column">
+                <button class="partStockButton grey darken-3 btn-small" id="` + info.po + `">Select</button>
             </div>
-            <div class="column">PO: ` + info.po + `</br>LINE: ` + info.line + `</div>
-            <div class="column">QTY: ` + info.qty + `</br>REC: ` + info.arrived + `</div>
+            <div class="custom-column"><p>PO: ` + info.po + `</br>LINE: ` + info.line + `</p></div>
+            <div class="custom-column"><p>QTY: ` + info.qty + `</br>REC: ` + info.arrived + `</p></div>
         </div>
         `);
 
@@ -75,6 +75,10 @@ function createPartStockButtons() {
         document.getElementById(info.po).onclick = function() {
             setPartStockInfo(info.po, info.line, info.arrived, info.qty);
         };
+    }
+
+    if (partStockInfos.length == 0) {
+        $("#floater-inner").append("<center><p>No in-stock material</br>found for this work order</p></center>");
     }
 
     // Let's add other options
@@ -91,25 +95,38 @@ function setPartStockInfo(po, line, arrived, qty) {
     $("div").removeClass("blurry");
     $("#floater").remove();
 
-    // Mark tag as finished so it stops listening for future events
+    //let htmlDoc = document.getElementById("worktag");
+    //html2pdf(htmlDoc);
+    
 }
 
 function addNonPartStockOptions() {
-    $("#floater-inner").append("</br><button class=\"partStockButton\" id=\"omit\">Omit part stock information</button></br>");
+    $("#floater-inner").append(`
+    <div class="custom-row">
+        </br><button class="partStockButton grey darken-3 btn-small" id="omit">Omit part stock information</button>
+        </br>
+        </br><button class="partStockButton grey darken-3 btn-small" id="materialfixture">This is a material fixture</button></br></br>
+    </div>
+    <center><p class="unselectable"><b>REMINDER</b> &#8212; Print with margins set to <i>Default</i></p></center>
+    `);
+
     document.getElementById("omit").onclick = function() {
         // Delete part stock div from HTML
         $(".part-stock-info").remove();
+        $("#qr-code1").prepend("</br>");
+        $("#qr-code2").prepend("</br>");
+        $("#qr-code3").prepend("</br>");
+        $("#qr-code4").prepend("</br>");
 
         // Deblur the tag and remove the floating dialog
         $("div").removeClass("blurry");
         $("#floater").remove();
     }
 
-    $("#floater-inner").append("</br><button class=\"partStockButton\" id=\"materialfixture\">This is a material fixture</button></br>");
     document.getElementById("materialfixture").onclick = function() {
         // Delete part stock div from HTML
         $(".part-stock-info").empty();
-        $(".part-stock-info").append("</br></br><h2>Material Fixture</h2>");
+        $(".part-stock-info").append("</br><h2>Material Fixture</h2>");
 
         // Deblur the tag and remove the floating dialog
         $("div").removeClass("blurry");
