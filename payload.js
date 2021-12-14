@@ -1,11 +1,11 @@
-// Run the payload after a 100ms delay
+// Run the payload after a 200ms delay
 setTimeout(scrapeData, 200);
-
-// Keep track of how many part stocks there are
-// and how many we have looked at
 
 function scrapeData() {
     let woNumber = null;
+
+    // Keep track of how many part stocks there are
+    // and how many we have looked at
     let numPartStocks = 0;
     let numPartStocksSearched = 0;
 
@@ -25,8 +25,6 @@ function scrapeData() {
 
         let partStockInfos = htmlDoc.getElementsByClassName("dashedTable");
         numPartStocks = partStockInfos.length;
-
-        console.log(numPartStocks);
 
         for (let i = 0; i < partStockInfos.length; i++) {
             // PO number
@@ -110,7 +108,6 @@ function scrapeData() {
                         
                         // Do we have a result?
                         if (lineWoNumber.innerHTML == woNumber) {
-                            console.log("We found a match");
                             chrome.runtime.sendMessage({
                                 type: "partStockInfo",
                                 // We get a substring of the PO# to prevent sending extra text...
