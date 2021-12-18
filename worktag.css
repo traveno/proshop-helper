@@ -149,6 +149,26 @@ h2 {
 /* Start of code for work tags         */
 /* ----------------------------------- */
 
+#printPageButton {
+  margin-right: 20px;
+}
+
+#toolbar {
+  margin: 10px 0 10px 12.5%;
+  padding: 10px;
+  float: left;
+  width: 75%;
+
+  border-style: ridge;
+  background-color: #DDD;
+}
+
+@media print {
+  #toolbar {
+    display: none;
+  }
+}
+
 .inner-quad {
   margin: 0.2in;
   border-radius: 20px;

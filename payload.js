@@ -11,7 +11,7 @@ function scrapeData() {
 
     try {
         woNumber = document.getElementById("pageTitle").childNodes[0].childNodes[2].innerHTML;
-    } catch(error) {
+    } catch (error) {
         console.log("Failed to obtain WO number. Are we on a WO page?");
         return;
     }

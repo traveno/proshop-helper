@@ -94,10 +94,7 @@ function setPartStockInfo(po, line, arrived, qty) {
     // Deblur the tag and remove the floating dialog
     $("div").removeClass("blurry");
     $("#floater").remove();
-
-    //let htmlDoc = document.getElementById("worktag");
-    //html2pdf(htmlDoc);
-    
+    $("#toolbar").removeClass("unselectable");
 }
 
 function addNonPartStockOptions() {
@@ -121,6 +118,7 @@ function addNonPartStockOptions() {
         // Deblur the tag and remove the floating dialog
         $("div").removeClass("blurry");
         $("#floater").remove();
+        $("#toolbar").removeClass("unselectable");
     }
 
     document.getElementById("materialfixture").onclick = function() {
@@ -131,5 +129,14 @@ function addNonPartStockOptions() {
         // Deblur the tag and remove the floating dialog
         $("div").removeClass("blurry");
         $("#floater").remove();
+        $("#toolbar").removeClass("unselectable");
     }
+}
+
+document.getElementById("printPageButton").onclick = function() {
+    window.print();
+}
+
+document.getElementById("closePageButton").onclick = function() {
+    window.close();
 }

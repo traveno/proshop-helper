@@ -19,10 +19,10 @@ function injectButton() {
 }
 
 // Only inject our custom button if we are on the main WO page
-if (!location.href.includes("formName=")   &&
-    !location.href.includes("pageType=")   &&
-    !location.href.includes("pagetype=")   &&
-    !location.href.includes("form=")       &&
+if (!location.href.includes("formName="  ) &&
+    !location.href.includes("pageType="  ) &&
+    !location.href.includes("pagetype="  ) &&
+    !location.href.includes("form="      ) &&
     !location.href.includes("customView=") &&
-    !location.href.includes("viewName="))
+    !location.href.includes("viewName="  ))
     injectButton();
