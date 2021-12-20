@@ -104,8 +104,31 @@ function addNonPartStockOptions() {
         </br>
         </br><button class="partStockButton grey darken-3 btn-small" id="materialfixture">This is a material fixture</button></br></br>
     </div>
+    <div class="custom-row valign-wrapper">
+        <div class="custom-column"><center><p>Custom Date:</p></center></div>
+        <div class="custom-column"><input type="text" class="datepicker"></div>
+        <div class="custom-column"><button class="partStockButton grey darken-3 btn-small" id="customdate">Select</button></div>
+    </div>
     <center><p class="unselectable"><b>REMINDER</b> &#8212; Print with margins set to <i>Default</i></p></center>
     `);
+
+    // Init datepicker
+    let date = $(".datepicker");
+    M.Datepicker.init(date, { autoClose: true, format: "m/d/yyyy", defaultDate: new Date(), setDefaultDate: true });
+
+    document.getElementById("customdate").onclick = function() {
+        // Delete part stock div from HTML
+        $(".part-stock-info").empty();
+
+        // Get datepicker instance and convert to a string
+        let instance = M.Datepicker.getInstance($(".datepicker"));
+        $(".part-stock-info").append("</br><h2>REC " + instance.toString() + "</h2>");
+
+        // Deblur the tag and remove the floating dialog
+        $("div").removeClass("blurry");
+        $("#floater").remove();
+        $("#toolbar").removeClass("unselectable");
+    }
 
     document.getElementById("omit").onclick = function() {
         // Delete part stock div from HTML

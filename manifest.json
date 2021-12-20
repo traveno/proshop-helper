@@ -1,8 +1,9 @@
 {
   "name": "ProShop Helper",
   "description": "Generates work order tags. Report bugs to Stephen.",
-  "version": "1.0",
-  "version_name": "1.0 beta",
+  "author": "Stephen Fike",
+  "version": "1.1.0",
+  "version_name": "1.1.0",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
@@ -18,7 +19,7 @@
   "content_scripts": [
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/workorders/2021/*"],
-      "js": ["customButton.js"],
+      "js": ["jquery-3.0.0.min.js", "customButton.js"],
       "run_at": "document_end"
     }
   ],
