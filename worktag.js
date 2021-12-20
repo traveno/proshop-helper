@@ -124,6 +124,9 @@ function addNonPartStockOptions() {
         let instance = M.Datepicker.getInstance($(".datepicker"));
         $(".part-stock-info").append("</br><h2>REC " + instance.toString() + "</h2>");
 
+        // Destroy datepicker
+        instance.destroy();
+
         // Deblur the tag and remove the floating dialog
         $("div").removeClass("blurry");
         $("#floater").remove();
