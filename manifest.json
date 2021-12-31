@@ -2,8 +2,8 @@
   "name": "ProShop Helper",
   "description": "Generates work order tags. Report bugs to Stephen.",
   "author": "Stephen Fike",
-  "version": "1.1.1",
-  "version_name": "1.1.1",
+  "version": "2.0.0",
+  "version_name": "2.0.0 beta",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"

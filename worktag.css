@@ -98,6 +98,10 @@ h2 {
 /* Start of code for floating window   */
 /* ----------------------------------- */
 
+.datepicker {
+  margin: 8px 0 8px 0 !important;
+}
+
 .partStockButton {
   margin-left: 10px;
 }

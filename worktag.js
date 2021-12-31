@@ -78,7 +78,7 @@ function createPartStockButtons() {
     }
 
     if (partStockInfos.length == 0) {
-        $("#floater-inner").append("<center><p>No in-stock material</br>found for this work order</p></center>");
+        $("#floater-inner").append("<center><p>No ProShop material found</p></center>");
     }
 
     // Let's add other options
@@ -88,8 +88,12 @@ function createPartStockButtons() {
 function setPartStockInfo(po, line, arrived, qty) {
     // Populate part stock information using jQuery
     $(".po-data").html(po);
-    $(".line-data").html(line);
     $(".rec-data").html(arrived);
+
+    if (line == "N/A")
+        $(".line-data").html("-");
+    else
+        $(".line-data").html(line);
    
     // Deblur the tag and remove the floating dialog
     $("div").removeClass("blurry");
