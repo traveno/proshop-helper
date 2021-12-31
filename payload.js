@@ -9,7 +9,7 @@ if (typeof numPartStocks == "undefined") {
     var numPartStocksSearched = 0;
 }
 
-function isSearchComplete() {
+function checkSearchComplete() {
     if (numPartStocksSearched == numPartStocks && numPartStocks != 0) {
         chrome.runtime.sendMessage({ type: "finishedSearch" });
         numPartStocks = numPartStocksSearched = 0;
@@ -33,9 +33,11 @@ function scrapeData() {
         const parser = new DOMParser();
         const partStockDoc = parser.parseFromString(html, "text/html");
 
+        // Get a list of the part stocks
         let tables = $(partStockDoc).find("table.dashedTable");
         numPartStocks = tables.length;
 
+        // Loop through each part stock
         $(tables).each(function() {
             // PO number
             let partStock_poNumber = null;
@@ -55,16 +57,26 @@ function scrapeData() {
                 return;
             }
 
+            // In case this is CSM and there is no ProShop material assigned
+            // therefore, there is no purchase order
             if (partStock_poNumber == "") {
                 chrome.runtime.sendMessage({ type: "finishedSearch" });
+
+                // Return false so that jQuery discontinues this each() loop
                 return false;
             }
 
+            // Load up the purchase order
             fetch("https://machinesciences.adionsystems.com/procnc/purchaseorders/" + partStock_poNumber).then(res => res.text()).then(html => {
                 const poDoc = parser.parseFromString(html, "text/html");
 
+                // Get a list of all line items in this purchase order
                 let poLineInfo = $(poDoc).find("table.poBody tbody tr td table tbody tr");
 
+                // If the user lacks permission to view purchase orders
+                // poLineInfo.length will be zero.
+                // A better way to go about this should be to check user
+                // permissions. This works for now, though.
                 if (poLineInfo.length == 0) {
                     chrome.runtime.sendMessage({
                         type: "partStockInfo",
@@ -74,16 +86,17 @@ function scrapeData() {
                         qty: partStock_actualQty == "" ? "N/A" : partStock_actualQty
                     });
 
-                    // Exit this async function
+                    // Exit this async fetch
                     return;
                 }
 
+                // Loop through each line of the purchase order
                 $(poLineInfo).each(function() {
                     let lineWoNumber = $(this).find("td.attValue a");
 
+                    // Loop through each column
                     $(lineWoNumber).each(function() {
-                        if ($(this).html() == woNumber) {
-                            console.log("we found a match");
+                        if ($(this).text() == woNumber) {
                             chrome.runtime.sendMessage({
                                 type: "partStockInfo",
                                 po: partStock_poNumber,
@@ -93,14 +106,14 @@ function scrapeData() {
                             });
                         }
 
-                        // Exit this async function
+                        // Exit this async fetch
                         return;
                     });
                 });
             }).then(function() {
                 // We need to keep track of this because these fetch() calls are asynchronous
                 numPartStocksSearched++;
-                isSearchComplete();
+                checkSearchComplete();
             });
         });
     });

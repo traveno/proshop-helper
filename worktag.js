@@ -22,7 +22,7 @@ chrome.runtime.onMessage.addListener(
 
         // Is this an incoming WO# from our scraper?
         if (request.type == "wo-number") {
-            document.getElementById("title").innerHTML = "Tag for " + request.data;
+            $("#title").html("Tag for " + request.data);
 
             // Loop through our four tags
             for (let i = 1; i <= 4; i++) {
@@ -38,11 +38,11 @@ chrome.runtime.onMessage.addListener(
                 qrcode.makeCode("https://machinesciences.adionsystems.com/procnc/workorders/" + request.data);
 
                 // Set the correct WO#
-                document.getElementById("work-order" + i).innerHTML = request.data;
+                $("#work-order" + i).html(request.data);
             }
 
             // Update the loading text to look fancy
-            document.getElementById("loadingText").innerHTML = "Searching part stocks</br>and purchase orders...";
+            $("#loadingText").html("Searching part stocks</br>and purchase orders...");
         }
 
         // We've completed our search. Display results
@@ -72,9 +72,9 @@ function createPartStockButtons() {
         `);
 
         // Assign a function to the button onclick() event
-        document.getElementById(info.po).onclick = function() {
+        $("#" + info.po).click(function() {
             setPartStockInfo(info.po, info.line, info.arrived, info.qty);
-        };
+        });
     }
 
     if (partStockInfos.length == 0) {
@@ -120,7 +120,7 @@ function addNonPartStockOptions() {
     let date = $(".datepicker");
     M.Datepicker.init(date, { autoClose: true, format: "m/d/yyyy", defaultDate: new Date(), setDefaultDate: true });
 
-    document.getElementById("customdate").onclick = function() {
+    $("#customdate").click(function() {
         // Delete part stock div from HTML
         $(".part-stock-info").empty();
 
@@ -135,9 +135,9 @@ function addNonPartStockOptions() {
         $("div").removeClass("blurry");
         $("#floater").remove();
         $("#toolbar").removeClass("unselectable");
-    }
+    });
 
-    document.getElementById("omit").onclick = function() {
+    $("#omit").click(function() {
         // Delete part stock div from HTML
         $(".part-stock-info").remove();
         $("#qr-code1").prepend("</br>");
@@ -149,9 +149,9 @@ function addNonPartStockOptions() {
         $("div").removeClass("blurry");
         $("#floater").remove();
         $("#toolbar").removeClass("unselectable");
-    }
+    });
 
-    document.getElementById("materialfixture").onclick = function() {
+    $("#materialfixture").click(function() {
         // Delete part stock div from HTML
         $(".part-stock-info").empty();
         $(".part-stock-info").append("</br><h2>Material Fixture</h2>");
@@ -160,13 +160,8 @@ function addNonPartStockOptions() {
         $("div").removeClass("blurry");
         $("#floater").remove();
         $("#toolbar").removeClass("unselectable");
-    }
-}
+    });
+} 
 
-document.getElementById("printPageButton").onclick = function() {
-    window.print();
-}
-
-document.getElementById("closePageButton").onclick = function() {
-    window.close();
-}
+$("#printPageButton").click(function() { window.print(); });
+$("#closePageButton").click(function() { window.close(); });
