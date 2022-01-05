@@ -48,9 +48,9 @@ function scrapeData() {
 
             // Attempt to scrape the part stock information
             try {
-                partStock_poNumber = $(this).find("a.htmlTooltip span").eq(0).text().split("-")[0];
-                partStock_actualQty = $(this).find("tr td.plainValue").eq(11).text();
-                partStock_actualArrived = $(this).find("tr td.plainValue").eq(15).text().split(";")[0];
+                partStock_poNumber = $(this).find("a.htmlTooltip span").eq(0).text();
+                partStock_actualQty = $(this).find("tr td.sideHeader:contains('Actual Qty:')").next().text();
+                partStock_actualArrived = $(this).find("tr td.sideHeader:contains('Actual Arrived:')").next().text().split(";")[0];
             } catch (error) {
                 console.log("Something went wrong");
                 chrome.runtime.sendMessage({ type: "finishedSearch" });
@@ -80,7 +80,7 @@ function scrapeData() {
                 if (poLineInfo.length == 0) {
                     chrome.runtime.sendMessage({
                         type: "partStockInfo",
-                        po: partStock_poNumber,
+                        po: partStock_poNumber.split("-")[0],
                         line: "N/A",
                         arrived: partStock_actualArrived == "" ? "N/R" : partStock_actualArrived,
                         qty: partStock_actualQty == "" ? "N/A" : partStock_actualQty
@@ -94,13 +94,20 @@ function scrapeData() {
                 $(poLineInfo).each(function() {
                     let lineWoNumber = $(this).find("td.attValue a");
 
-                    // Loop through each column
+                    // Loop through each result
                     $(lineWoNumber).each(function() {
                         if ($(this).text() == woNumber) {
+                            let linePoNumber = "";
+
+                            if ($(this).parent().prop("tagName") == "SPAN")
+                                linePoNumber = $(this).parent().parent().siblings().eq(0).text().split(" ")[0];
+                            else
+                                linePoNumber = $(this).parent().siblings().eq(0).text().split(" ")[0];
+
                             chrome.runtime.sendMessage({
                                 type: "partStockInfo",
-                                po: partStock_poNumber,
-                                line: $(this).parent().siblings().eq(0).text().split(" ")[0],
+                                po: partStock_poNumber.split("-")[0],
+                                line: linePoNumber,
                                 arrived: partStock_actualArrived == "" ? "N/R" : partStock_actualArrived,
                                 qty: partStock_actualQty == "" ? "N/A" : partStock_actualQty
                             });
