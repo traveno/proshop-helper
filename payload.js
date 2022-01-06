@@ -26,7 +26,7 @@ function scrapeData() {
         return;
     }
     
-    chrome.runtime.sendMessage({ type: "wo-number", data: woNumber });
+    chrome.runtime.sendMessage({ type: "woNumber", data: woNumber });
 
     // Load up the part stock information for this WO number
     fetch("https://machinesciences.adionsystems.com/procnc/workorders/" + woNumber + "$formName=partStockStatus").then(res => res.text()).then(html => {

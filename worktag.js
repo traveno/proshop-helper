@@ -21,7 +21,7 @@ chrome.runtime.onMessage.addListener(
         }
 
         // Is this an incoming WO# from our scraper?
-        if (request.type == "wo-number") {
+        if (request.type == "woNumber") {
             $("#title").html("Tag for " + request.data);
 
             // Loop through our four tags
