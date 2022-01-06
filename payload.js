@@ -20,7 +20,7 @@ function scrapeData() {
     let woNumber = null;
 
     try {
-        woNumber = $("font#pageTitleContent.pageTitleContent a.htmlTooltip").text();
+        woNumber = $("div#pageTitle.pageTitle.page a.htmlTooltip").text();
     } catch (error) {
         console.log("Failed to obtain WO number. Are we on a WO page?");
         return;
