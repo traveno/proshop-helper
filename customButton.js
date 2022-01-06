@@ -26,5 +26,3 @@ if (!location.href.includes("formName="  ) &&
     !location.href.includes("customView=") &&
     !location.href.includes("viewName="  ))
     injectButton();
-
-console.log("match");
