@@ -3,7 +3,7 @@
   "description": "Generates work order tags. Report bugs to Stephen.",
   "author": "Stephen Fike",
   "version": "2.1.4",
-  "version_name": "2.1.4",
+  "version_name": "2.1.4 beta",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
@@ -20,6 +20,11 @@
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/workorders/20*/*"],
       "js": ["jquery-3.0.0.min.js", "customButton.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://machinesciences.adionsystems.com/procnc/ots*"],
+      "js": ["jquery-3.0.0.min.js", "customCots.js"],
       "run_at": "document_end"
     }
   ],

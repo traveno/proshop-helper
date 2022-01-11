@@ -1,0 +1,307 @@
+/* cotstag.html */
+
+/* ----------------------------------- */
+/* Start of high level and global css  */
+/* ----------------------------------- */
+
+/* Secret option? */
+@page { margin: 0; }
+
+/* Define document size as a standard sheet of paper */
+html, body { height: 11in; width: 8.5in; padding: 0; margin: 0; font-family: Tahoma, sans-serif; } 
+
+#quad1,#quad2,#quad3,#quad4 {
+  width: 50%; 
+  height: 50%; 
+  float: left;
+}
+
+#qr-code1,#qr-code2,#qr-code3,#qr-code4 {
+  padding: 0.2in 0 0.1in 0;
+}
+
+div {
+  padding:0em;
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+}
+
+.unselectable {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.blurry {
+  filter: blur(10px);
+}
+
+/* ----------------------------------- */
+/* End of high level and global css    */
+/* ----------------------------------- */
+
+/* ----------------------------------- */
+/* Start of code for part stock info   */
+/* ----------------------------------- */
+
+h3 {
+  margin-top: 12px;
+  margin-bottom: 0px;
+  font-size: 12pt;
+  font-weight: bold;
+}
+
+h2 {
+  font-weight: bold;
+}
+
+.part-stock-info p {
+  font-size: 12pt;
+  margin: 5px 0 0 0;
+}
+
+.right-align {
+  text-align: right;
+}
+
+.left-align {
+  text-align: left;
+}
+
+/* Clear floats after the columns */
+.custom-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.custom-row {
+  padding-top: 0px;
+  margin: 0px;
+  width: 80%;
+}
+
+.custom-column {
+  float: left;
+  width: 33%;
+}
+
+/* ----------------------------------- */
+/* End of code for part stock info     */
+/* ----------------------------------- */
+
+/* ----------------------------------- */
+/* Start of code for floating window   */
+/* ----------------------------------- */
+
+.datepicker {
+  margin: 8px 0 8px 0 !important;
+}
+
+.partStockButton {
+  margin-left: 10px;
+}
+
+#floater {
+  top: 5.5in;
+  left: 4.25in;
+  position: absolute;
+}
+
+#floater-inner {
+  position: relative;
+
+  width: 400px;
+  margin-left: -200px;
+  margin-top: -100%;
+
+  padding: 0 5px 0 5px;
+
+  background-color: #fff;
+  border-radius: 10px;
+  border: thin dashed #000;
+}
+
+#floater-inner p {
+  font-size: 12pt;
+  margin: 10px 0 10px 0;
+}
+
+#floater-inner .custom-column {
+  width: 33%;
+}
+
+#floater-inner .custom-row {
+  width: 100%;
+  border-bottom: thin dashed #000;
+}
+
+#loadingText {
+  font-size: 12pt;
+  padding-bottom: 20px;
+}
+
+/* ----------------------------------- */
+/* End of code for floating window     */
+/* ----------------------------------- */
+
+/* ----------------------------------- */
+/* Start of code for work tags         */
+/* ----------------------------------- */
+
+#printPageButton {
+  margin-right: 20px;
+}
+
+#toolbar {
+  margin: 10px 0 10px 12.5%;
+  padding: 10px;
+  float: left;
+  width: 75%;
+
+  border-style: ridge;
+  background-color: #DDD;
+}
+
+@media print {
+  #toolbar {
+    display: none;
+  }
+}
+
+.inner-quad {
+  margin: 0.2in;
+  border-radius: 20px;
+  border-style: solid;
+  border-width: 5px;
+  border-color: #FFF;
+  height: 5.1in;
+
+  box-shadow: inset 0px 0px 0px 2px #000;
+}
+
+.logo {
+  width: 60%;
+  padding-top: 0.3in;
+}
+
+.inner-quad h2 {
+  margin: 0;
+}
+
+p.work-order {
+  font-size: 60px;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  width: 75%;
+  padding-bottom: 0.0in;
+  margin: 0.0in 0 0.08in 0;
+  line-height: 1.25;
+}
+
+div.inner-quad h2 {
+  font-size: 24px;
+}
+
+/* ----------------------------------- */
+/* End of code for work tags           */
+/* ----------------------------------- */
+
+/* ----------------------------------- */
+/* Start of code for cutting guide     */
+/* ----------------------------------- */
+
+#quad1 {
+  border-right: thin dashed #777;
+}
+
+#quad3 {
+  border-right: thin dashed #777;
+  border-top: thin dashed #777;
+}
+
+#quad4 {
+  border-top: thin dashed #777;
+}
+
+/* ----------------------------------- */
+/* End of code for cutting guide       */
+/* ----------------------------------- */
+
+/* ----------------------------------- */
+/* Loading spinner animation code      */
+/* courtesy https://loading.io/css/    */
+/* ----------------------------------- */
+
+.lds-grid {
+  margin-top: 35px;
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-grid div {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #999;
+  animation: lds-grid 1.2s linear infinite;
+}
+.lds-grid div:nth-child(1) {
+  top: 8px;
+  left: 8px;
+  animation-delay: 0s;
+}
+.lds-grid div:nth-child(2) {
+  top: 8px;
+  left: 32px;
+  animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(3) {
+  top: 8px;
+  left: 56px;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(4) {
+  top: 32px;
+  left: 8px;
+  animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(5) {
+  top: 32px;
+  left: 32px;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(6) {
+  top: 32px;
+  left: 56px;
+  animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(7) {
+  top: 56px;
+  left: 8px;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(8) {
+  top: 56px;
+  left: 32px;
+  animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(9) {
+  top: 56px;
+  left: 56px;
+  animation-delay: -1.6s;
+}
+@keyframes lds-grid {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

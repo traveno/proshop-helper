@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Import Google Icon Font -->
+    <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+    <!-- Import materialize.css -->
+    <link type="text/css" rel="stylesheet" href="materialize.min.css"  media="screen,projection"/>
+    <!-- Import our worktag css file -->
+    <link rel="stylesheet" href="cotstag.css">
+    <title id="title">Blank Cots Tag</title>
+  </head>
+  <!-- <button id="printPageButton" class="grey darken-3 btn">Print This Worktag</button> -->
+  <body>
+    <center><div id="toolbar" class="blurry unselectable">
+      <button id="printPageButton" class="grey darken-3 btn">Print This Worktag</button>
+      <button id="closePageButton" class="grey darken-3 btn">Close Page</button>
+    </div></center>
+    <div id="quad1" class="blurry unselectable"><center>
+      <div class="inner-quad">
+        <img class="logo" src="img/msci_logo_tf.png" />
+        <p id="work-order1" class="work-order">XX-XXXX</p>
+        <h2>WORK ORDER</h2>
+        <div id="qr-code1"></div>
+        <div class="part-stock-info">
+          <div class="custom-row">
+            <div class="custom-column left-align">
+              <h3>PO</h3>
+              <p class="po-data">XXXXXX</p>
+            </div>
+            <div class="custom-column">
+              <h3>LINE</h3>
+              <p class="line-data">X</p>
+            </div>
+            <div class="custom-column right-align">
+              <h3>REC</h3>
+              <p class="rec-data">XX/XX/XXXX</p>
+            </div>
+          </div>
+        </div>
+      </div></center>
+    </div>
+    <div id="quad2" class="blurry unselectable"><center>
+      <div class="inner-quad">
+        <img class="logo" src="img/msci_logo_tf.png" />
+        <p id="work-order2" class="work-order">XX-XXXX</p>
+        <h2>WORK ORDER</h2>
+        <div id="qr-code2"></div>
+        <div class="part-stock-info">
+          <div class="custom-row">
+            <div class="custom-column left-align">
+              <h3>PO</h3>
+              <p class="po-data">XXXXXX</p>
+            </div>
+            <div class="custom-column">
+              <h3>LINE</h3>
+              <p class="line-data">X</p>
+            </div>
+            <div class="custom-column right-align">
+              <h3>REC</h3>
+              <p class="rec-data">XX/XX/XXXX</p>
+            </div>
+          </div>
+        </div>
+      </div></center>
+    </div>
+    <div id="quad3" class="blurry unselectable"><center>
+      <div class="inner-quad">
+        <img class="logo" src="img/msci_logo_tf.png" />
+        <p id="work-order3" class="work-order">XX-XXXX</p>
+        <h2>WORK ORDER</h2>
+        <div id="qr-code3"></div>
+        <div class="part-stock-info">
+          <div class="custom-row">
+            <div class="custom-column left-align">
+              <h3>PO</h3>
+              <p class="po-data">XXXXXX</p>
+            </div>
+            <div class="custom-column">
+              <h3>LINE</h3>
+              <p class="line-data">X</p>
+            </div>
+            <div class="custom-column right-align">
+              <h3>REC</h3>
+              <p class="rec-data">XX/XX/XXXX</p>
+            </div>
+          </div>
+        </div>
+      </div></center>
+    </div>
+    <div id="quad4" class="blurry unselectable"><center>
+      <div class="inner-quad">
+        <img class="logo" src="img/msci_logo_tf.png" />
+        <p id="work-order4" class="work-order">XX-XXXX</p>
+        <h2>WORK ORDER</h2>
+        <div id="qr-code4"></div>
+        <div class="part-stock-info">
+          <div class="custom-row">
+            <div class="custom-column left-align">
+              <h3>PO</h3>
+              <p class="po-data">XXXXXX</p>
+            </div>
+            <div class="custom-column">
+              <h3>LINE</h3>
+              <p class="line-data">X</p>
+            </div>
+            <div class="custom-column right-align">
+              <h3>REC</h3>
+              <p class="rec-data">XX/XX/XXXX</p>
+            </div>
+          </div>
+        </div>
+      </div></center>
+    </div>
+
+    <div id="floater">
+      <div id="floater-inner" class="z-depth-4">
+        <center><div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <p id="loadingText" class="unselectable">Waiting for work order number...</p></center>
+
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="jquery-3.0.0.min.js"></script>
+    <script src="materialize.min.js"></script>
+    <script src="qrcode.js"></script>
+    <script src="worktag.js"></script>
+  </body>
+</html>
