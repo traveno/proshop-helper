@@ -1,6 +1,8 @@
 # ProShop Helper
 
-Like Hamburger Helper but even better. This is a chrome extension that adds additional functionality to the ProShop ERP system. Current features include:
+*Like Hamburger Helper but better.*
+
+This is a chrome extension that adds additional functionality to the ProShop ERP system. Current features include:
 
  - [x] Robust work tag generation tailored for raw materials
  - [ ] COTS tag generation
