@@ -1,32 +1,60 @@
-// Run the payload after a 200ms delay
-setTimeout(scrapeData, 200);
-
 // Define our global variables
+// Only define once
 if (typeof numPartStocks == "undefined") {
     // Keep track of how many part stocks there are
     // and how many we have looked at
     var numPartStocks = 0;
     var numPartStocksSearched = 0;
+
+    // Our communication port
+    var port = null;
+
+    // Add listener to assign our global port variable when connected to
+    chrome.runtime.onConnect.addListener(function(portInfo) {
+        debug("adding listener");
+        port = portInfo;
+        port.onMessage.addListener(message => processPort(message));
+    });
+    
 }
 
+// Remove our port listener and then disconnect
+function closePort() {
+    debug("closePort called");
+    port.onMessage.removeListener(processPort);
+    port.disconnect();
+}
+
+// This function acts as listener for incoming messages
+function processPort(message) {
+    debug("processing port data");
+    if (message.type == "executePayload") {
+        scrapeData();
+    }
+}
+
+// Checks if we've searched all possible part stocks
 function checkSearchComplete() {
     if (numPartStocksSearched == numPartStocks && numPartStocks != 0) {
-        chrome.runtime.sendMessage({ type: "finishedSearch" });
+        port.postMessage({ type: "finishedSearch" });
+        closePort();
         numPartStocks = numPartStocksSearched = 0;
     }
 }
 
+// The meat and potatoes -- data scraping algorithm
 function scrapeData() {
+    debug("scrapeData called");
     let woNumber = null;
 
     try {
         woNumber = $("div#pageTitle.pageTitle.page a.htmlTooltip").text();
     } catch (error) {
-        console.log("Failed to obtain WO number. Are we on a WO page?");
+        debug("Failed to obtain WO number. Are we on a WO page?");
         return;
     }
     
-    chrome.runtime.sendMessage({ type: "woNumber", data: woNumber });
+    port.postMessage({ type: "woNumber", data: woNumber });
 
     // Load up the part stock information for this WO number
     fetch("https://machinesciences.adionsystems.com/procnc/workorders/" + woNumber + "$formName=partStockStatus").then(res => res.text()).then(html => {
@@ -52,15 +80,17 @@ function scrapeData() {
                 partStock_actualQty = $(this).find("tr td.sideHeader:contains('Actual Qty:')").next().text();
                 partStock_actualArrived = $(this).find("tr td.sideHeader:contains('Actual Arrived:')").next().text().split(";")[0];
             } catch (error) {
-                console.log("Something went wrong");
-                chrome.runtime.sendMessage({ type: "finishedSearch" });
+                debug("Something went wrong");
+                port.postMessage({ type: "finishedSearch" });
+                closePort();
                 return;
             }
 
             // In case this is CSM and there is no ProShop material assigned
             // therefore, there is no purchase order
             if (partStock_poNumber == "") {
-                chrome.runtime.sendMessage({ type: "finishedSearch" });
+                port.postMessage({ type: "finishedSearch" });
+                closePort();
 
                 // Return false so that jQuery discontinues this each() loop
                 return false;
@@ -78,7 +108,7 @@ function scrapeData() {
                 // A better way to go about this should be to check user
                 // permissions. This works for now, though.
                 if (poLineInfo.length == 0) {
-                    chrome.runtime.sendMessage({
+                    port.postMessage({
                         type: "partStockInfo",
                         po: partStock_poNumber.split("-")[0],
                         line: "N/A",
@@ -104,7 +134,8 @@ function scrapeData() {
                             else
                                 linePoNumber = $(this).parent().siblings().eq(0).text().split(" ")[0];
 
-                            chrome.runtime.sendMessage({
+                            debug("we about to send it bruv " + $(this).text() + " == " + woNumber);
+                            port.postMessage({
                                 type: "partStockInfo",
                                 po: partStock_poNumber.split("-")[0],
                                 line: linePoNumber,
@@ -125,3 +156,7 @@ function scrapeData() {
         });
     });
 }
+
+function debug(info) {
+    chrome.runtime.sendMessage({ type: "debug", file: "payload.js", info: info });
+};

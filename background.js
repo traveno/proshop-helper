@@ -1,16 +1,25 @@
+var DEBUG_MODE = true;
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
 
     if (request.type == "generateTag") {
-        getCurrentTab().then(function(data) {
-
-            chrome.scripting.executeScript({
-                target: { tabId: data.id },
-                files: ["payload.js"],
+        getCurrentTab().then(function(tabCurrent) {
+            chrome.tabs.create({ url: "worktag.html" }).then(function(tabWorktag) {
+                debug("background.js", "created worktag tab");
+                chrome.scripting.executeScript({
+                    target: { tabId: tabCurrent.id },
+                    files: ["payload.js"],
+                }).then(function() {
+                    debug("background.js", "sending setPortInfo command");
+                    chrome.tabs.sendMessage(tabWorktag.id, { type: "setPortInfo", portInfo: tabCurrent });
+                });
             });
         })
+    }
 
-        chrome.tabs.create({ url: "worktag.html"});
+    if (request.type == "debug") {
+        debug(request.file, request.info);
     }
 });
 
@@ -18,4 +27,9 @@ async function getCurrentTab() {
     let queryOptions = { active: true, currentWindow: true };
     let [tab] = await chrome.tabs.query(queryOptions);
     return tab;
+}
+
+function debug(file, info) {
+    if (DEBUG_MODE)
+        console.log(file + ": " + info);
 }

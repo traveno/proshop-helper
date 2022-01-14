@@ -8,50 +8,66 @@ chrome.runtime.onMessage.addListener(
         // Check if this tag is already finished
         if (generated) { return; }
 
-        if (request.type == "partStockInfo") {
-            // Check if this has actually been received
-            if (request.arrived == "") { return; }
+        if (request.type == "setPortInfo") {
+            debug("received setPortInfo command");
+            let port = chrome.tabs.connect(request.portInfo.id);
 
-            partStockInfos.push({
-                po: request.po,
-                line: request.line,
-                arrived: request.arrived,
-                qty: request.qty
-            });
-        }
-
-        // Is this an incoming WO# from our scraper?
-        if (request.type == "woNumber") {
-            $("#title").html("Tag for " + request.data);
-
-            // Loop through our four tags
-            for (let i = 1; i <= 4; i++) {
-                var qrcode = new QRCode("qr-code" + i, {
-                    width: 192,
-                    height: 192,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                });
-
-                // Generate QR code
-                qrcode.makeCode("https://machinesciences.adionsystems.com/procnc/workorders/" + request.data);
-
-                // Set the correct WO#
-                $("#work-order" + i).html(request.data);
+            if (port != null) {
+                debug("port established to content script");
+                port.onMessage.addListener(message => processPort(message));
+                port.postMessage({ type: "executePayload" });
             }
-
-            // Update the loading text to look fancy
-            $("#loadingText").html("Searching part stocks</br>and purchase orders...");
-        }
-
-        // We've completed our search. Display results
-        if (request.type == "finishedSearch") {
-            createPartStockButtons();
-            // Mark tag as finished so it stops listening for future events
-            generated = true;
         }
 });
+
+function processPort(message) {
+    if (message.type == "woNumber") {
+        $("#title").html("Tag for " + message.data);
+
+        // Loop through our four tags
+        for (let i = 1; i <= 4; i++) {
+            var qrcode = new QRCode("qr-code" + i, {
+                width: 192,
+                height: 192,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.L
+            });
+
+            // Generate QR code
+            qrcode.makeCode("https://machinesciences.adionsystems.com/procnc/workorders/" + message.data);
+
+            // Set the correct WO#
+            $("#work-order" + i).html(message.data);
+        }
+
+        // Update the loading text to look fancy
+        $("#loadingText").html("Searching part stocks</br>and purchase orders...");
+    }
+
+    if (message.type == "partStockInfo") {
+        // Check if this has actually been received
+        if (message.arrived == "") { return; }
+
+        partStockInfos.push({
+            po: message.po,
+            line: message.line,
+            arrived: message.arrived,
+            qty: message.qty
+        });
+    }
+
+    // We've completed our search. Display results
+    if (message.type == "finishedSearch") {
+        createPartStockButtons();
+        // Mark tag as finished so it stops listening for future events
+        generated = true;
+    }
+}
+
+function debug(info) {
+    chrome.runtime.sendMessage({ type: "debug", file: "worktag.js", info: info });
+};
 
 function createPartStockButtons() {
     // Delete the loading text and animation
