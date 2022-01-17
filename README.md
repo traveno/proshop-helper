@@ -6,7 +6,7 @@ This is a chrome extension that adds additional functionality to the ProShop ERP
 
  - [x] Robust work tag generation tailored for raw materials
  - [ ] COTS tag generation
- - [ ] Purchase order file renaming
+ - [x] Purchase order file renaming
 
 # Quick Overview
 
@@ -17,6 +17,6 @@ This is a chrome extension that adds additional functionality to the ProShop ERP
 * customButton.js -- executes on work order pages and adds our user interface (customButton.html)
 * manifest.json -- chrome manifest file that defines how and where this plugin works
 
- # Future Plans
+# Future Plans
  
- Ideas have been discussed such as  simplified file uploading and machine generated COTS tags. I plan to have these implemented by the end of Q1 2022.
+Ideas have been discussed such as simplified file uploading and machine generated COTS tags. I plan to have these implemented by the end of Q1 2022.
