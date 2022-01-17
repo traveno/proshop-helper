@@ -1,13 +1,9 @@
 /* worktag.js */
 
-var generated = false;
 var partStockInfos = new Array();
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        // Check if this tag is already finished
-        if (generated) { return; }
-
         if (request.type == "setPortInfo") {
             debug("received setPortInfo command");
             let port = chrome.tabs.connect(request.portInfo.id);
@@ -60,8 +56,6 @@ function processPort(message) {
     // We've completed our search. Display results
     if (message.type == "finishedSearch") {
         createPartStockButtons();
-        // Mark tag as finished so it stops listening for future events
-        generated = true;
     }
 }
 
