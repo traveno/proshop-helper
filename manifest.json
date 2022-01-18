@@ -2,8 +2,8 @@
   "name": "ProShop Helper",
   "description": "Generates work order tags. Report bugs to Stephen.",
   "author": "Stephen Fike",
-  "version": "2.3.0",
-  "version_name": "2.3.0",
+  "version": "3.0.0",
+  "version_name": "3.0.0 beta",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
@@ -31,6 +31,11 @@
       "matches": ["https://machinesciences.adionsystems.com/procnc/procncAdmin/fileserver/editfile*"],
       "js": ["jquery-3.0.0.min.js", "customRename.js"],
       "run_at": "document_end"
+    },
+    {
+      "matches": ["https://machinesciences.adionsystems.com/procnc/purchaseorders/20*/*"],
+      "js": ["jquery-3.0.0.min.js", "customPO.js"],
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
