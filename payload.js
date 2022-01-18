@@ -6,6 +6,8 @@ if (typeof numPartStocks == "undefined") {
     var numPartStocks = 0;
     var numPartStocksSearched = 0;
 
+    var searchedPOs = new Array();
+
     // Our communication port
     var port = null;
 
@@ -39,6 +41,7 @@ function checkSearchComplete() {
         port.postMessage({ type: "finishedSearch" });
         closePort();
         numPartStocks = numPartStocksSearched = 0;
+        searchedPOs = new Array();
     }
 }
 
@@ -83,8 +86,19 @@ function scrapeData() {
                 debug("Something went wrong");
                 port.postMessage({ type: "finishedSearch" });
                 closePort();
-                return;
+                return true;
             }
+
+            // Avoid searching duplicate POs
+            if (searchedPOs.includes(partStock_poNumber)) {
+                numPartStocks--;
+                checkSearchComplete();
+                debug("found a duplicate PO");
+                return true;
+            } else {
+                searchedPOs.push(partStock_poNumber);
+            }
+                
 
             // In case this is CSM and there is no ProShop material assigned
             // therefore, there is no purchase order
