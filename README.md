@@ -6,7 +6,8 @@ This is a chrome extension that adds additional functionality to the ProShop ERP
 
  - [x] Robust work tag generation tailored for raw materials
  - [ ] COTS tag generation
- - [x] Purchase order file renaming
+ - [x] Standardized individual file names
+ - [x] Automated file formatting over entire purchase orders
 
 # Quick Overview
 
