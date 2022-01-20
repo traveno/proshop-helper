@@ -68,6 +68,8 @@ function scrapeData() {
         let tables = $(partStockDoc).find("table.dashedTable");
         numPartStocks = tables.length;
 
+        debug("found " + numPartStocks + " part stock(s)");
+
         // Loop through each part stock
         $(tables).each(function() {
             // PO number
