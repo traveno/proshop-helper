@@ -48,7 +48,10 @@ function checkSearchComplete() {
 // The meat and potatoes -- data scraping algorithm
 function scrapeData() {
     debug("scrapeData called");
+
+    // Reset/set our vars
     let woNumber = null;
+    searchedPOs = new Array();
 
     try {
         woNumber = $("div#pageTitle.pageTitle.page a.htmlTooltip").text();
