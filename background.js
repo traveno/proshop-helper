@@ -10,7 +10,10 @@ chrome.runtime.onMessage.addListener(
                 chrome.scripting.executeScript({
                     target: { tabId: tabCurrent.id },
                     files: ["payload.js"],
-                }).then(function() {
+                }).then(async function() {
+                    // Sometimes slow computers miss this command,
+                    // so I add a little delay
+                    await delay(250);
                     debug("background.js", "sending setPortInfo command");
                     chrome.tabs.sendMessage(tabWorktag.id, { type: "setPortInfo", portInfo: tabCurrent });
                 });
@@ -22,6 +25,10 @@ chrome.runtime.onMessage.addListener(
         debug(request.file, request.info);
     }
 });
+
+function delay(ms) {
+    return new Promise(resolve => { setTimeout(() => { resolve('') }, ms)});
+}
 
 async function getCurrentTab() {
     let queryOptions = { active: true, currentWindow: true };
