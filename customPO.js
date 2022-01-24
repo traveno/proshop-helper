@@ -56,9 +56,9 @@ async function renameFile(href, msDelay) {
 
             // Create or update the status line below the Make Pretty button
             if (numFilesProcessed == 1)
-                $("#prettifyPO").after("<br><br><p>Processed " + numFilesProcessed + " files of " + numFiles + "...</p>");
+                $("#prettifyPO").after("<br><br><p>Processed " + numFilesProcessed + " of " + numFiles + " files...</p>");
             else 
-                $("#prettifyPO").siblings("p").html("<p>Processed " + numFilesProcessed + " files of " + numFiles + "...</p>");
+                $("#prettifyPO").siblings("p").html("<p>Processed " + numFilesProcessed + " of " + numFiles + " files...</p>");
 
             // renameFile is a delayed async func so numFilesProcessed should never outrun numFiles
             if (numFilesProcessed == numFiles) {
