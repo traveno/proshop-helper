@@ -4,4 +4,6 @@ if ($("span.user_name").text() == "STEPHEN F") {
     $("a.testbutton").click(function () {
         console.log("https://machinesciences.adionsystems.com" + $(this).prev().attr("href"));
     });
+
+    $("ul.breadcrumb").append("<li><a id=\"createTagButton\">Create Tag</a></li>");
 }
