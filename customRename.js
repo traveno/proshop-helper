@@ -16,6 +16,6 @@ $("#renameFile").click(function() {
     const textExplode = text.split("_");
 
     // Create our prettified version and insert it into the input field
-    let newText = "PO" + textExplode[1].split("-")[0] + " PS" + textExplode[4];
+    let newText = "PO" + textExplode[1].split("-")[0] + " PS" + textExplode[2] + ".pdf";
     $(filename).val(newText);
 });

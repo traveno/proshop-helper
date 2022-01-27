@@ -83,8 +83,8 @@ function makePretty(string) {
     const textExplode = string.split("_");
 
     // Create our prettified version and insert it into the input field
-    let newText = "PO" + textExplode[1].split("-")[0] + " PS" + textExplode[4];
-    console.log(string + " -> " + newText);
+    let newText = "PO" + textExplode[1].split("-")[0] + " PS" + textExplode[2] + ".pdf";
+    debug(string + " -> " + newText);
     return newText;
 }
 
