@@ -12,7 +12,7 @@ html, body { height: 11in; width: 8.5in; padding: 0; margin: 0; font-family: Tah
 
 #quad1,#quad2,#quad3,#quad4 {
   width: 50%; 
-  height: 50%; 
+  height: 20%; 
   float: left;
 }
 
@@ -179,7 +179,8 @@ h2 {
   border-style: solid;
   border-width: 5px;
   border-color: #FFF;
-  height: 5.1in;
+  /*height: 5.1in;*/
+  padding: 12px 0 12px 0;
 
   box-shadow: inset 0px 0px 0px 2px #000;
 }
@@ -193,13 +194,13 @@ h2 {
   margin: 0;
 }
 
-p.work-order {
-  font-size: 60px;
+p.cots-id {
+  font-size: 20px;
   border-style: solid;
   border-width: 0 0 2px 0;
-  width: 75%;
+  width: 90%;
   padding-bottom: 0.0in;
-  margin: 0.0in 0 0.08in 0;
+  margin: 0;
   line-height: 1.25;
 }
 
