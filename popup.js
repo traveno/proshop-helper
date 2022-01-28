@@ -16,3 +16,8 @@ generateTag.addEventListener("click", async () => {
 chrome.management.getSelf(function(result) {
   document.getElementById("ver").innerHTML = "You are running version " + result.version;
 });
+
+document.getElementById("openCotsSuite").onclick = function() {
+  chrome.runtime.sendMessage({ type: "openCotsMenu" });
+  window.close();
+}
