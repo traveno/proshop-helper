@@ -6,4 +6,8 @@ if ($("span.user_name").text() == "STEPHEN F") {
     });
 
     $("ul.breadcrumb").append("<li><a id=\"createTagButton\">Create Tag</a></li>");
+
+    $("#createTagButton").click(function() {
+        chrome.runtime.sendMessage({ type: "openCotsMenu" });
+    });
 }
