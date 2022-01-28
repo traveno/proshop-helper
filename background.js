@@ -18,7 +18,11 @@ chrome.runtime.onMessage.addListener(
                     chrome.tabs.sendMessage(tabWorktag.id, { type: "setPortInfo", portInfo: tabCurrent });
                 });
             });
-        })
+        });
+    }
+
+    if (request.type == "openCotsMenu") {
+        chrome.windows.create({ url: "cotsMenu.html", width: 500, height: 500, type: "popup" });
     }
 
     if (request.type == "debug") {
