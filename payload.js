@@ -94,25 +94,27 @@ function scrapeData() {
                 return true;
             }
 
+            // In case this is CSM and there is no ProShop material assigned
+            // therefore, there is no purchase order
+            if (partStock_poNumber == "") {
+                numPartStocks--;
+                checkSearchComplete();
+                debug("partstock po number is ''");
+
+                // Return true so jQuery continues this each() loop
+                return true;
+            }
+
             // Avoid searching duplicate POs
             if (searchedPOs.includes(partStock_poNumber)) {
                 numPartStocks--;
                 checkSearchComplete();
                 debug("found a duplicate PO");
+
+                // Return true so jQuery continues this each() loop
                 return true;
             } else {
                 searchedPOs.push(partStock_poNumber);
-            }
-                
-
-            // In case this is CSM and there is no ProShop material assigned
-            // therefore, there is no purchase order
-            if (partStock_poNumber == "") {
-                port.postMessage({ type: "finishedSearch" });
-                closePort();
-
-                // Return false so that jQuery discontinues this each() loop
-                return false;
             }
 
             // Load up the purchase order
