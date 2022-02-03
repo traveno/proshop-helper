@@ -25,6 +25,10 @@ chrome.runtime.onMessage.addListener(
         chrome.windows.create({ url: "cotsMenu.html", width: 500, height: 500, type: "popup" });
     }
 
+    if (request.type == "openPartsMenu") {
+        chrome.windows.create({ url: "partsMenu.html", width: 500, height: 375, type: "popup" });
+    }
+
     if (request.type == "debug") {
         debug(request.file, request.info);
     }

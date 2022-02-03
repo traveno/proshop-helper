@@ -1,0 +1,118 @@
+// Keep track of file counts so we know when to refresh
+var numParts = 0;
+var numPartsProcessed = 0;
+
+var csvContent = "data:text/csv;charset=utf-8,";
+
+$("#scrapeParts").click(function() {
+    // Reset our global vars
+    numParts = 0;
+    numPartsProcessed = 0;
+
+    // Disable button
+    $("#scrapeParts").prop("disabled", true);
+
+    // Fetch all parts within ProShop
+    $("#status").text("Building list...");
+    fetch("https://machinesciences.adionsystems.com/procnc/parts/searchresults$queryScope=global&queryName=query1&pName=parts").then(res => res.text()).then(html => {
+        let parser = new DOMParser();
+        let partListDoc = parser.parseFromString(html, "text/html");    
+    
+        let partList = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip").slice(0,20);
+        numParts = partList.length;
+
+        let delayMultiplier = 0;
+
+        // Do work
+        $(partList).each(function() {
+            scrapeDataFromPart($(this).attr("href"), (delayMultiplier++) * 500);
+        });
+    });
+});
+
+async function scrapeDataFromPart(href, msDelay) {
+    // Delay this function to avoid overloading the server
+    await delay(msDelay);
+    
+    // Fetch the rename file page using the edit button's href
+    fetch("https://machinesciences.adionsystems.com" + href).then(res => res.text()).then(html => {
+        let parser = new DOMParser();
+        let partDoc = parser.parseFromString(html, "text/html");
+
+        let opTable = $(partDoc).find("table.proshop-table").eq(4);
+
+        let partInfo = "";
+
+        // Internal part number
+        partInfo += $(partDoc).find("td#horizontalMainAtts_partNumber_value").text() + ",";
+
+        // Internal part revision
+        if ($(partDoc.getElementById("horizontalMainAtts_drawinginformation.v000001.latestpartrev.v000001_value")).has("a").length)
+            partInfo += $(partDoc.getElementById("horizontalMainAtts_drawinginformation.v000001.latestpartrev.v000001_value")).find("a").text() + ",";
+        else
+            partInfo += $(partDoc.getElementById("horizontalMainAtts_drawinginformation.v000001.latestpartrev.v000001_value")).text() + ",";
+
+        // Misc
+        partInfo += getValueFromOpTable(opTable,  20, 2 ) + ","; // OP 20 Operation Description
+        partInfo += getValueFromOpTable(opTable,  20, 6 ) + ","; // OP 20 NR Set-up
+        partInfo += getValueFromOpTable(opTable,  25, 2 ) + ","; // OP 25 Operation Description
+        partInfo += getValueFromOpTable(opTable,  25, 6 ) + ","; // OP 25 NR Set-up
+        partInfo += getValueFromOpTable(opTable,  30, 2 ) + ","; // OP 30 Operation Description
+        partInfo += getValueFromOpTable(opTable,  30, 6 ) + ","; // OP 30 NR Set-up
+        partInfo += getValueFromOpTable(opTable,  50, 2 ) + ","; // OP 50 Operation Description
+        partInfo += getValueFromOpTable(opTable,  50, 1 ) + ","; // OP 50 Resource
+        partInfo += getValueFromOpTable(opTable,  50, 5 ) + ","; // OP 50 Set-up
+        partInfo += getValueFromOpTable(opTable,  50, 6 ) + ","; // OP 50 NR Set-up
+        partInfo += getValueFromOpTable(opTable,  50, 8 ) + ","; // OP 50 Cycle
+        partInfo += getValueFromOpTable(opTable,  50, 14) + ","; // OP 50 Min/Part
+        partInfo += getValueFromOpTable(opTable,  60, 2 ) + ","; // OP 60 Operation Description
+        partInfo += getValueFromOpTable(opTable,  60, 1 ) + ","; // OP 60 Resource
+        partInfo += getValueFromOpTable(opTable,  60, 5 ) + ","; // OP 60 Set-up
+        partInfo += getValueFromOpTable(opTable,  60, 8 ) + ","; // OP 60 Cycle
+        partInfo += getValueFromOpTable(opTable,  60, 9 ) + ","; // OP 60 Change out
+        partInfo += getValueFromOpTable(opTable,  60, 14) + ","; // OP 60 Min/Part
+        partInfo += getValueFromOpTable(opTable,  60, 10) + ","; // OP 60 Inspection (FAI)
+        partInfo += getValueFromOpTable(opTable,  61, 2 ) + ","; // OP 61 Operation Description
+        partInfo += getValueFromOpTable(opTable,  61, 1 ) + ","; // OP 61 Resource
+        partInfo += getValueFromOpTable(opTable,  61, 5 ) + ","; // OP 61 Set-up
+        partInfo += getValueFromOpTable(opTable,  61, 8 ) + ","; // OP 61 Cycle
+        partInfo += getValueFromOpTable(opTable,  61, 9 ) + ","; // OP 61 Change out
+        partInfo += getValueFromOpTable(opTable,  61, 14) + ","; // OP 61 Min/Part
+        partInfo += getValueFromOpTable(opTable,  61, 10) + ","; // OP 61 Inspection (FAI)
+        partInfo += getValueFromOpTable(opTable, 500, 2 ) + ","; // OP 500 Operation Description
+        partInfo += getValueFromOpTable(opTable, 500, 14) + ","; // OP 500 Min/Part
+
+        console.log(partInfo);
+
+    }).then(function() {
+        numPartsProcessed++;
+        $("#status").text("Processed " + numPartsProcessed + " of " + numParts + "...");
+    });
+}
+
+function getValueFromOpTable(table, opCode, column) {
+    let tableRows = $(table).find("tbody tr");
+    let result = "";
+
+    $(tableRows).each(function() {
+        let rowOp = $(this).find("td:first-of-type > a").text();
+        if (rowOp == opCode) {
+            if ($(this).find("td").eq(column).children().length) {
+                result = $(this).find("td").eq(column).eq(0).text();
+            } else {
+                result = $(this).find("td").eq(column).text();
+            }
+        }
+    });
+
+    return result.trim() ? result : "";
+}
+
+// This is the delay that is called in async functions
+function delay(ms) {
+    return new Promise(resolve => { setTimeout(() => { resolve('') }, ms)});
+}
+
+function debug(info) {
+    chrome.runtime.sendMessage({ type: "debug", file: "partsMenu.js", info: info });
+};

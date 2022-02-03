@@ -21,3 +21,8 @@ document.getElementById("openCotsSuite").onclick = function() {
   chrome.runtime.sendMessage({ type: "openCotsMenu" });
   window.close();
 }
+
+document.getElementById("openPartsSuite").onclick = function() {
+  chrome.runtime.sendMessage({ type: "openPartsMenu" });
+  window.close();
+}
