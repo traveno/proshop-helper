@@ -2,7 +2,7 @@
 var filename = $("form#linkEditForm input").eq(2);
 
 // Inject our custom button
-$("<button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"renameFile\" title=\"Prettify filename\">Make Pretty</button>").insertAfter(filename);
+$("<button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"renameFile\" title=\"Prettify filename\">Rename</button>").insertAfter(filename);
 
 // Assign js to our custom button
 $("#renameFile").click(function() {
