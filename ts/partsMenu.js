@@ -18,12 +18,13 @@ $("#scrapeParts").click(function() {
         let parser = new DOMParser();
         let partListDoc = parser.parseFromString(html, "text/html");    
     
+        // Build a global parts list
         let partList = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip").slice(0,20);
         numParts = partList.length;
 
         let delayMultiplier = 0;
 
-        // Do work
+        // Queue up our data scraping work
         $(partList).each(function() {
             scrapeDataFromPart($(this).attr("href"), (delayMultiplier++) * 500);
         });
@@ -34,11 +35,12 @@ async function scrapeDataFromPart(href, msDelay) {
     // Delay this function to avoid overloading the server
     await delay(msDelay);
     
-    // Fetch the rename file page using the edit button's href
+    // Fetch the part level page
     fetch("https://machinesciences.adionsystems.com" + href).then(res => res.text()).then(html => {
         let parser = new DOMParser();
         let partDoc = parser.parseFromString(html, "text/html");
 
+        // Grab a reference to the large OP table
         let opTable = $(partDoc).find("table.proshop-table").eq(4);
 
         let partInfo = "";
@@ -52,7 +54,7 @@ async function scrapeDataFromPart(href, msDelay) {
         else
             partInfo += $(partDoc.getElementById("horizontalMainAtts_drawinginformation.v000001.latestpartrev.v000001_value")).text() + ",";
 
-        // Misc
+        // Misc data
         partInfo += getValueFromOpTable(opTable,  20, 2 ) + ","; // OP 20 Operation Description
         partInfo += getValueFromOpTable(opTable,  20, 6 ) + ","; // OP 20 NR Set-up
         partInfo += getValueFromOpTable(opTable,  25, 2 ) + ","; // OP 25 Operation Description
@@ -82,14 +84,20 @@ async function scrapeDataFromPart(href, msDelay) {
         partInfo += getValueFromOpTable(opTable, 500, 2 ) + ","; // OP 500 Operation Description
         partInfo += getValueFromOpTable(opTable, 500, 14) + ","; // OP 500 Min/Part
 
+        // TODO Route information into a CSV file for download
+        // For now we're simply outputting to the dev console
         console.log(partInfo);
 
     }).then(function() {
+        // Keep track of how many we've processed
+        // This is important because fetch() calls are async
         numPartsProcessed++;
         $("#status").text("Processed " + numPartsProcessed + " of " + numParts + "...");
     });
 }
 
+// This returns the data held in a cell of the op table as a string
+// Empty cells return ""
 function getValueFromOpTable(table, opCode, column) {
     let tableRows = $(table).find("tbody tr");
     let result = "";
