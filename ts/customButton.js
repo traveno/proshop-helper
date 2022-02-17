@@ -1,5 +1,5 @@
 function injectButton() {
-    fetch(chrome.runtime.getURL("customButton.html")).then(r => r.text()).then(html => {
+    /*fetch(chrome.runtime.getURL("customButton.html")).then(r => r.text()).then(html => {
         // Attempt to inject the "Create Work Tag" button into the page
         try {
             document.getElementById("dropdownMenu").parentElement.insertAdjacentHTML('beforebegin', html);
@@ -15,6 +15,11 @@ function injectButton() {
                 chrome.runtime.sendMessage({ type: "generateTag" });
             };
         }
+    });*/
+
+    $("#dropdownMenu").before("<button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"generateTag\" title=\"Generate QR sheet\">Work Tag</button>");
+    $("#generateTag").click(function () {
+        chrome.runtime.sendMessage({ type: "generateTag" });
     });
 }
 

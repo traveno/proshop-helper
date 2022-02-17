@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener(
                 debug("background.js", "created worktag tab");
                 chrome.scripting.executeScript({
                     target: { tabId: tabCurrent.id },
-                    files: ["payload.js"],
+                    files: ["js/build/payload.js"],
                 }).then(async function() {
                     // Sometimes slow computers miss this command,
                     // so I add a little delay

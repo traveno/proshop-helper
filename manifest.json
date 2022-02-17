@@ -6,7 +6,7 @@
   "version_name": "3.0.0 beta",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "./js/background.js"
   },
   "icons": {
     "128": "icon128.png"
@@ -19,28 +19,28 @@
   "content_scripts": [
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/workorders/20*/*"],
-      "js": ["jquery-3.0.0.min.js", "customButton.js"],
+      "js": ["./js/libs/jquery-3.0.0.min.js", "./js/build/customButton.js"],
       "run_at": "document_end"
     },
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/ots*"],
-      "js": ["jquery-3.0.0.min.js", "customCots.js"],
+      "js": ["./js/libs/jquery-3.0.0.min.js", "./js/build/customCots.js"],
       "run_at": "document_end"
     },
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/procncAdmin/fileserver/editfile*"],
-      "js": ["jquery-3.0.0.min.js", "customRename.js"],
+      "js": ["./js/libs/jquery-3.0.0.min.js", "./js/build/customRename.js"],
       "run_at": "document_end"
     },
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/purchaseorders/20*/*"],
-      "js": ["jquery-3.0.0.min.js", "customPO.js"],
+      "js": ["./js/libs/jquery-3.0.0.min.js", "./js/build/customPO.js"],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["customButton.html", "jquery-3.0.0.min.js"],
+      "resources": ["./js/libs/customButton.html", "./js/libs/jquery-3.0.0.min.js"],
       "matches": ["https://machinesciences.adionsystems.com/*"]
     }
   ]

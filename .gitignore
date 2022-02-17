@@ -1,2 +1,4 @@
 # Ignore .bak files
 *.bak
+js/build
+.vscode
