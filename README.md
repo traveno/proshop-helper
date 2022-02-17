@@ -14,8 +14,11 @@ This is a Chrome extension that adds additional functionality to the ProShop ERP
 # Building
 
 Building requires a TypeScript installation. A TypeScript transpiler can be installed using Node.js...
+
 `npm install -g typescript`
+
 Source code can be built by running `tsc` in the root directory of the project.
+
 VSCode seems to work best for this type of project.
 
 # Quick Overview
@@ -29,6 +32,7 @@ sheet using available part stock information.
 
 `partsMenu.js` records specific data points from all parts within ProShop. Everything works, but the data needs to
 be routed into a download file for the user. User interface can be accessed from the extension window.
+
 Currently the algorithm is limited to the first 20 parts to avoid overloading the server during testing.
 
 ## Standardized File Renaming
