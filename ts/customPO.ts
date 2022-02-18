@@ -1,5 +1,3 @@
-import { delayMs, debugInfo } from "./common.js";
-
 $("table.poBody td.clsdHeader:contains(Other Files)").append("</br><button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"prettifyPO\" title=\"Prettify this PO\">Rename All</button>");
 
 // Keep track of file counts so we know when to refresh
@@ -14,7 +12,7 @@ $("#prettifyPO").on("click", () => {
 
     // Remove unnecessary work files
     // e.g. files that already look pretty
-    $(editList).each(() => {
+    $(editList).each(function() {
         let text: string = $(this).parent().parent().find("font a").get(0).childNodes[1].nodeValue;
         if (!text.includes("PO") && !text.includes("PS")) {
             // We found a candidate, so we increase numFiles and call renameFile()
@@ -83,4 +81,12 @@ function makePretty(string: string): string {
     let newText: string = "PO" + textExplode[1].split("-")[0] + " PS" + textExplode[2] + ".pdf";
     debugInfo("customPO", string + " -> " + newText);
     return newText;
+}
+
+function delayMs(ms: number = 0) {
+    return new Promise(resolve => { setTimeout(() => { resolve('') }, ms)});
+}
+
+function debugInfo(subject: string = "Unknown", info: string): void {
+    chrome.runtime.sendMessage({ type: "debug", file: subject, info: info });
 }
