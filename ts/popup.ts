@@ -13,16 +13,16 @@ generateTag.addEventListener("click", async () => {
   chrome.tabs.create({ url: "worktag.html"});
 });*/
 
-chrome.management.getSelf(function(result) {
+chrome.management.getSelf((result) => {
   document.getElementById("ver").innerHTML = "You are running version " + result.version;
 });
 
-document.getElementById("openCotsSuite").onclick = function() {
+document.getElementById("openCotsSuite").onclick = () => {
   chrome.runtime.sendMessage({ type: "openCotsMenu" });
   window.close();
 }
 
-document.getElementById("openPartsSuite").onclick = function() {
+document.getElementById("openPartsSuite").onclick = () => {
   chrome.runtime.sendMessage({ type: "openPartsMenu" });
   window.close();
 }
