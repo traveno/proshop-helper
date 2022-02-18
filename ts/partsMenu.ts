@@ -1,4 +1,4 @@
-import { delayMs, debugInfo } from "./common";
+import { delayMs, debugInfo } from "./common.js";
 
 // Keep track of file counts so we know when to refresh
 var numParts: number = 0;
@@ -13,6 +13,8 @@ $("#scrapeParts").on("click", () => {
 
     // Disable button
     $("#scrapeParts").prop("disabled", true);
+
+    debugInfo("partsMenu", "Starting parts scraping alg");
 
     // Fetch all parts within ProShop
     $("#status").text("Building list...");
