@@ -13,13 +13,17 @@ This is a Chrome extension that adds additional functionality to the ProShop ERP
 
 # Building
 
-Building requires a TypeScript installation. A TypeScript transpiler can be installed using Node.js...
+Building requires a TypeScript installation. A TypeScript global transpiler can be installed using the Node.js package manager...
 
 `npm install -g typescript`
 
+Then install the project's dependencies by running this command in the root project directory...
+
+`npm install`
+
 Source code can be built by running `tsc` in the root directory of the project.
 
-VSCode seems to work best for this type of project.
+VSCode seems to work best for this type of project. Press `ctrl + shift + b` to build.
 
 # Quick Overview
 
