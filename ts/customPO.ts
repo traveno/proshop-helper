@@ -1,10 +1,12 @@
+import { delayMs, debugInfo } from "./common.js";
+
 $("table.poBody td.clsdHeader:contains(Other Files)").append("</br><button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"prettifyPO\" title=\"Prettify this PO\">Rename All</button>");
 
 // Keep track of file counts so we know when to refresh
 var numFiles = 0;
 var numFilesProcessed = 0;
 
-$("#prettifyPO").click(function() {
+$("#prettifyPO").on("click", () => {
     // Get all purchase order files
     let editList = $("td.attValue[align='left'] div.hidden-buttons-wrapper a[title='Edit']");
     // Use a delay multiplier that we pass to our async function
@@ -18,19 +20,19 @@ $("#prettifyPO").click(function() {
             // We found a candidate, so we increase numFiles and call renameFile()
             numFiles++;
             renameFile($(this).attr("onclick").split("'")[1], (delayMultiplier++) * 500);
-            debug("renaming " + text);
+            debugInfo("customPO", "renaming " + text);
         } else
-            debug("skipping " + text);
+            debugInfo("customPO", "skipping " + text);
     });
 
     // Button was clicked but we found no candidates
     if (numFiles == 0)
-        debug("nothing found to rename");
+        debugInfo("customPO", "nothing found to rename");
 });
 
 async function renameFile(href, msDelay) {
     // Delay this function to avoid overloading the server
-    await delay(msDelay);
+    await delayMs(msDelay);
     
     // Fetch the rename file page using the edit button's href
     fetch("https://machinesciences.adionsystems.com" + href).then(res => res.text()).then(html => {
@@ -41,10 +43,10 @@ async function renameFile(href, msDelay) {
         let filename = $(editFileDoc).find("form#linkEditForm input").eq(2);
 
         // Give the text box a new value that is pretty
-        $(filename).val(makePretty($(filename).val()));
+        $(filename).val(makePretty($(filename).val() as string));
 
         // Take a snapshot of the completed form ready for submit
-        const data = new URLSearchParams(new FormData(editFileDoc.getElementById("linkEditForm")));
+        const data: URLSearchParams = new URLSearchParams(new FormData(editFileDoc.getElementById("linkEditForm") as HTMLFormElement) as URLSearchParams);
 
         // Fetch the action page for the form and submit by POST
         fetch("https://machinesciences.adionsystems.com" + $(editFileDoc).find("form#linkEditForm").attr("action"), {
@@ -69,13 +71,8 @@ async function renameFile(href, msDelay) {
     });
 }
 
-// This is the delay that is called in async functions
-function delay(ms) {
-    return new Promise(resolve => { setTimeout(() => { resolve('') }, ms)});
-}
-
 // Shared function from customRename.js
-function makePretty(string) {
+function makePretty(string: string) {
     // Check if it's empty, or if we've already prettified the text
     if (string == "" || string.includes("PO") || string.includes("PS"))
         return string;
@@ -84,10 +81,6 @@ function makePretty(string) {
 
     // Create our prettified version and insert it into the input field
     let newText = "PO" + textExplode[1].split("-")[0] + " PS" + textExplode[2] + ".pdf";
-    debug(string + " -> " + newText);
+    debugInfo("customPO", string + " -> " + newText);
     return newText;
 }
-
-function debug(info) {
-    chrome.runtime.sendMessage({ type: "debug", file: "customPO.js", info: info });
-};
