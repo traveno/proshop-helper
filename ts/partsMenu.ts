@@ -1,10 +1,12 @@
+import { delayMs, debugInfo } from "./common";
+
 // Keep track of file counts so we know when to refresh
-var numParts = 0;
-var numPartsProcessed = 0;
+var numParts: number = 0;
+var numPartsProcessed: number = 0;
 
 var csvContent = "data:text/csv;charset=utf-8,";
 
-$("#scrapeParts").click(function() {
+$("#scrapeParts").on("click", () => {
     // Reset our global vars
     numParts = 0;
     numPartsProcessed = 0;
@@ -15,11 +17,11 @@ $("#scrapeParts").click(function() {
     // Fetch all parts within ProShop
     $("#status").text("Building list...");
     fetch("https://machinesciences.adionsystems.com/procnc/parts/searchresults$queryScope=global&queryName=query1&pName=parts").then(res => res.text()).then(html => {
-        let parser = new DOMParser();
-        let partListDoc = parser.parseFromString(html, "text/html");    
+        let parser: DOMParser = new DOMParser();
+        let partListDoc: Document = parser.parseFromString(html, "text/html");    
     
         // Build a global parts list
-        let partList = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip").slice(0,20);
+        let partList: JQuery<HTMLElement> = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip").slice(0,20);
         numParts = partList.length;
 
         let delayMultiplier = 0;
@@ -31,19 +33,19 @@ $("#scrapeParts").click(function() {
     });
 });
 
-async function scrapeDataFromPart(href, msDelay) {
+async function scrapeDataFromPart(href: string, msDelay: number) {
     // Delay this function to avoid overloading the server
-    await delay(msDelay);
+    await delayMs(msDelay);
     
     // Fetch the part level page
     fetch("https://machinesciences.adionsystems.com" + href).then(res => res.text()).then(html => {
-        let parser = new DOMParser();
-        let partDoc = parser.parseFromString(html, "text/html");
+        let parser: DOMParser = new DOMParser();
+        let partDoc: Document = parser.parseFromString(html, "text/html");
 
         // Grab a reference to the large OP table
-        let opTable = $(partDoc).find("table.proshop-table").eq(4);
+        let opTable: JQuery<HTMLElement> = $(partDoc).find("table.proshop-table").eq(4);
 
-        let partInfo = "";
+        let partInfo: string = "";
 
         // Internal part number
         partInfo += $(partDoc).find("td#horizontalMainAtts_partNumber_value").text() + ",";
@@ -115,12 +117,3 @@ function getValueFromOpTable(table, opCode, column) {
 
     return result.trim() ? result : "";
 }
-
-// This is the delay that is called in async functions
-function delay(ms) {
-    return new Promise(resolve => { setTimeout(() => { resolve('') }, ms)});
-}
-
-function debug(info) {
-    chrome.runtime.sendMessage({ type: "debug", file: "partsMenu.js", info: info });
-};
