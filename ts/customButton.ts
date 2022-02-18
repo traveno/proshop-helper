@@ -18,7 +18,7 @@ function injectButton() {
     });*/
 
     $("#dropdownMenu").before("<button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"generateTag\" title=\"Generate QR sheet\">Work Tag</button>");
-    $("#generateTag").click(function () {
+    $("#generateTag").on("click", () => {
         chrome.runtime.sendMessage({ type: "generateTag" });
     });
 }
