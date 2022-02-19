@@ -74,7 +74,7 @@ function createPartStockButtons() {
         $("#floater-inner").append(`
         <div class="custom-row valign-wrapper">
             <div class="custom-column">
-                <button class="partStockButton grey darken-3 btn-small" id="` + info.po + info.line + `">Select</button>
+                <button class="partStockButton grey darken-3 btn-small" id="` + partStockInfos.indexOf(info) + `">Select</button>
             </div>
             <div class="custom-column"><p>PO: ` + info.po + `</br>LINE: ` + info.line + `</p></div>
             <div class="custom-column"><p>QTY: ` + info.qty + `</br>REC: ` + info.arrived + `</p></div>
@@ -82,7 +82,7 @@ function createPartStockButtons() {
         `);
 
         // Assign a function to the button onclick() event
-        $("#" + info.po + info.line).click(function() {
+        $("#" + partStockInfos.indexOf(info)).click(function() {
             setPartStockInfo(info.po, info.line, info.arrived, info.qty);
         });
     }
