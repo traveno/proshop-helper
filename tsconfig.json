@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
-        "outDir": "./js/build",
+        "outDir": "./js/build/",
         "allowJs": true,
-        "target": "es2015"
+        "target": "es2016",
+        "moduleResolution": "node"
     },
     "include": ["./ts/**/*"]
 }
