@@ -1,32 +1,32 @@
 import { debugInfo } from "./common";
 
 // Define our global variables
-// Only define once
-if (typeof numPartStocks == "undefined") {
-    // Keep track of how many part stocks there are
-    // and how many we have looked at
-    var numPartStocks = 0;
-    var numPartStocksSearched = 0;
+// Keep track of how many part stocks there are
+// and how many we have looked at
+var numPartStocks = 0;
+var numPartStocksSearched = 0;
 
-    var searchedPOs = new Array();
+var searchedPOs = new Array();
 
-    // Our communication port
-    var port = null;
+// Our communication port
+var port = null;
 
-    // Add listener to assign our global port variable when connected to
-    chrome.runtime.onConnect.addListener(function(portInfo) {
-        debugInfo("payload", "adding listener");
-        port = portInfo;
-        port.onMessage.addListener(message => processPort(message));
-    });
-    
+// Add listener to assign our global port variable when connected to
+chrome.runtime.onConnect.addListener(openPort);
+
+function openPort(portInfo) {
+    debugInfo("payload", "adding listener");
+    port = portInfo;
+    port.onMessage.addListener(message => processPort(message));
 }
+
 
 // Remove our port listener and then disconnect
 function closePort() {
     debugInfo("payload", "closePort called");
     port.onMessage.removeListener(processPort);
     port.disconnect();
+    chrome.runtime.onConnect.removeListener(openPort);
 }
 
 // This function acts as listener for incoming messages
