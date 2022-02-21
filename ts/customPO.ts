@@ -1,3 +1,6 @@
+import { debugInfo, delayMs } from "./common";
+
+// Add our button
 $("table.poBody td.clsdHeader:contains(Other Files)").append("</br><button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"prettifyPO\" title=\"Prettify this PO\">Rename All</button>");
 
 // Keep track of file counts so we know when to refresh
@@ -81,12 +84,4 @@ function makePretty(string: string): string {
     let newText: string = "PO" + textExplode[1].split("-")[0] + " PS" + textExplode[2] + ".pdf";
     debugInfo("customPO", string + " -> " + newText);
     return newText;
-}
-
-function delayMs(ms: number = 0) {
-    return new Promise(resolve => { setTimeout(() => { resolve('') }, ms)});
-}
-
-function debugInfo(subject: string = "Unknown", info: string): void {
-    chrome.runtime.sendMessage({ type: "debug", file: subject, info: info });
 }

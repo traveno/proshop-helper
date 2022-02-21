@@ -1,3 +1,5 @@
+export {};
+
 // Initialize button for generating tag
 /*let generateTag = document.getElementById("generateTag");
 

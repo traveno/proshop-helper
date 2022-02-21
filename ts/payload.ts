@@ -1,3 +1,5 @@
+import { debugInfo } from "./common";
+
 // Define our global variables
 // Only define once
 if (typeof numPartStocks == "undefined") {
@@ -13,7 +15,7 @@ if (typeof numPartStocks == "undefined") {
 
     // Add listener to assign our global port variable when connected to
     chrome.runtime.onConnect.addListener(function(portInfo) {
-        debug("adding listener");
+        debugInfo("payload", "adding listener");
         port = portInfo;
         port.onMessage.addListener(message => processPort(message));
     });
@@ -22,14 +24,14 @@ if (typeof numPartStocks == "undefined") {
 
 // Remove our port listener and then disconnect
 function closePort() {
-    debug("closePort called");
+    debugInfo("payload", "closePort called");
     port.onMessage.removeListener(processPort);
     port.disconnect();
 }
 
 // This function acts as listener for incoming messages
 function processPort(message) {
-    debug("processing port data");
+    debugInfo("payload", "processing port data");
     if (message.type == "executePayload") {
         scrapeData();
     }
@@ -47,7 +49,7 @@ function checkSearchComplete() {
 
 // The meat and potatoes -- data scraping algorithm
 function scrapeData() {
-    debug("scrapeData called");
+    debugInfo("payload", "scrapeData called");
 
     // Reset/set our vars
     let woNumber = null;
@@ -56,7 +58,7 @@ function scrapeData() {
     try {
         woNumber = $("div#pageTitle.pageTitle.page a.htmlTooltip").text();
     } catch (error) {
-        debug("Failed to obtain WO number. Are we on a WO page?");
+        debugInfo("payload", "Failed to obtain WO number. Are we on a WO page?");
         return;
     }
     
@@ -71,7 +73,7 @@ function scrapeData() {
         let tables = $(partStockDoc).find("table.dashedTable");
         numPartStocks = tables.length;
 
-        debug("found " + numPartStocks + " part stock(s)");
+        debugInfo("payload", "found " + numPartStocks + " part stock(s)");
 
         // Loop through each part stock
         $(tables).each(function() {
@@ -88,7 +90,7 @@ function scrapeData() {
                 partStock_actualQty = $(this).find("tr td.sideHeader:contains('Actual Qty:')").next().text();
                 partStock_actualArrived = $(this).find("tr td.sideHeader:contains('Actual Arrived:')").next().text().split(";")[0];
             } catch (error) {
-                debug("Something went wrong");
+                debugInfo("payload", "Something went wrong");
                 port.postMessage({ type: "finishedSearch" });
                 closePort();
                 return;
@@ -99,7 +101,7 @@ function scrapeData() {
             if (partStock_poNumber == "") {
                 numPartStocksSearched++;
                 checkSearchComplete();
-                debug("partstock po number is ''");
+                debugInfo("payload", "partstock po number is ''");
 
                 // Return true so jQuery continues this each() loop
                 return;
@@ -109,7 +111,7 @@ function scrapeData() {
             if (searchedPOs.includes(partStock_poNumber)) {
                 numPartStocksSearched++;
                 checkSearchComplete();
-                debug("found a duplicate PO");
+                debugInfo("payload", "found a duplicate PO");
 
                 // Return true so jQuery continues this each() loop
                 return;
@@ -155,7 +157,7 @@ function scrapeData() {
                             else
                                 linePoNumber = $(this).parent().siblings().eq(0).text().split(" ")[0];
 
-                            debug("we about to send it bruv " + $(this).text() + " == " + woNumber);
+                            debugInfo("payload", "we about to send it bruv " + $(this).text() + " == " + woNumber);
                             port.postMessage({
                                 type: "partStockInfo",
                                 po: partStock_poNumber.split("-")[0],
@@ -177,7 +179,3 @@ function scrapeData() {
         });
     });
 }
-
-function debug(info) {
-    chrome.runtime.sendMessage({ type: "debug", file: "payload.js", info: info });
-};

@@ -1,4 +1,4 @@
-import { delayMs, debugInfo } from "./common.js";
+import { delayMs, debugInfo } from "./common";
 
 // Keep track of file counts so we know when to refresh
 var numParts: number = 0;

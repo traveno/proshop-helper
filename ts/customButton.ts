@@ -1,3 +1,5 @@
+export {};
+
 function injectButton() {
     /*fetch(chrome.runtime.getURL("customButton.html")).then(r => r.text()).then(html => {
         // Attempt to inject the "Create Work Tag" button into the page

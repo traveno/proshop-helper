@@ -1,3 +1,5 @@
+export {};
+
 // Find our input field that we wish to manipulate
 var filepath: JQuery<HTMLElement> = $("form#linkEditForm input").eq(1);
 var filename: JQuery<HTMLElement> = $("form#linkEditForm input").eq(2);

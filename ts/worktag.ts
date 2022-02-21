@@ -1,7 +1,5 @@
-/* worktag.js */
-
 // Import common funcs and delcare external JS libs
-import { debugInfo } from "./common.js";
+import { debugInfo } from "./common";
 declare var QRCode: any;
 
 var partStockInfos = new Array();
