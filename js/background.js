@@ -6,7 +6,7 @@ chrome.runtime.onMessage.addListener(
     if (request.type == "generateTag") {
         getCurrentTab().then(function(tabCurrent) {
             chrome.tabs.create({ url: "worktag.html" }).then(function(tabWorktag) {
-                debug("background.js", "created worktag tab");
+                debug("background", "created worktag tab");
                 chrome.scripting.executeScript({
                     target: { tabId: tabCurrent.id },
                     files: ["js/build/payload.js"],
