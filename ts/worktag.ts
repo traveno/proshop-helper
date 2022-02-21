@@ -1,15 +1,19 @@
 /* worktag.js */
 
+// Import common funcs and delcare external JS libs
+import { debugInfo } from "./common.js";
+declare var QRCode: any;
+
 var partStockInfos = new Array();
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.type == "setPortInfo") {
-            debug("received setPortInfo command");
+            debugInfo("worktag", "received setPortInfo command");
             let port = chrome.tabs.connect(request.portInfo.id);
 
             if (port != null) {
-                debug("port established to content script");
+                debugInfo("worktag", "port established to content script");
                 port.onMessage.addListener(message => processPort(message));
                 port.postMessage({ type: "executePayload" });
             }
@@ -58,10 +62,6 @@ function processPort(message) {
         createPartStockButtons();
     }
 }
-
-function debug(info) {
-    chrome.runtime.sendMessage({ type: "debug", file: "worktag.js", info: info });
-};
 
 function createPartStockButtons() {
     // Delete the loading text and animation
@@ -130,12 +130,12 @@ function addNonPartStockOptions() {
     let date = $(".datepicker");
     M.Datepicker.init(date, { autoClose: true, format: "m/d/yyyy", defaultDate: new Date(), setDefaultDate: true });
 
-    $("#customdate").click(function() {
+    $("#customdate").on("click", () => {
         // Delete part stock div from HTML
         $(".part-stock-info").empty();
 
         // Get datepicker instance and convert to a string
-        let instance = M.Datepicker.getInstance($(".datepicker"));
+        let instance = M.Datepicker.getInstance($(".datepicker").get(0));
         $(".part-stock-info").append("</br><h2>REC " + instance.toString() + "</h2>");
 
         // Destroy datepicker
@@ -147,7 +147,7 @@ function addNonPartStockOptions() {
         $("#toolbar").removeClass("unselectable");
     });
 
-    $("#omit").click(function() {
+    $("#omit").on("click", () => {
         // Delete part stock div from HTML
         $(".part-stock-info").remove();
         $("#qr-code1").prepend("</br>");
@@ -161,7 +161,7 @@ function addNonPartStockOptions() {
         $("#toolbar").removeClass("unselectable");
     });
 
-    $("#materialfixture").click(function() {
+    $("#materialfixture").on("click", () => {
         // Delete part stock div from HTML
         $(".part-stock-info").empty();
         $(".part-stock-info").append("</br><h2>Material Fixture</h2>");
@@ -173,5 +173,5 @@ function addNonPartStockOptions() {
     });
 } 
 
-$("#printPageButton").click(function() { window.print(); });
-$("#closePageButton").click(function() { window.close(); });
+$("#printPageButton").on("click", () => { window.print(); });
+$("#closePageButton").on("click", () => { window.close(); });
