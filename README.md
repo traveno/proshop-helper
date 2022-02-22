@@ -1,3 +1,7 @@
+![ProShop Logo](https://raw.githubusercontent.com/traveno/proshop-helper/main/dist/img/ph-logo.png)
+
+![Release workflow](https://github.com/traveno/proshop-helper/actions/workflows/node.js.release.yml/badge.svg) ![Pre-Release workflow](https://github.com/traveno/proshop-helper/actions/workflows/node.js.pre-release.yml/badge.svg)
+
 # ProShop Helper
 
 *Like Hamburger Helper but better.*
@@ -13,7 +17,7 @@ This is a Chrome extension that adds additional functionality to the ProShop ERP
 
 # Building
 
-The following commands are executed from the root project directory.
+A Node.js installation that is visible in your PATH is required. The following commands are executed from the root project directory.
 
 Install the project's dependencies:
 
