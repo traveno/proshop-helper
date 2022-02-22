@@ -1,5 +1,5 @@
 # Ignore .bak files
 *.bak
-js/build/
+dist/js/build
 .vscode
 node_modules/

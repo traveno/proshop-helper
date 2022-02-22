@@ -1,3 +1,4 @@
+import * as $ from "jquery";
 import { delayMs, debugInfo, getFullDate } from "./common";
 
 // Keep track of file counts so we know when to refresh

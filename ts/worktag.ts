@@ -1,4 +1,5 @@
 // Import common funcs and delcare external JS libs
+import * as $ from "jquery";
 import { debugInfo } from "./common";
 declare var QRCode: any;
 

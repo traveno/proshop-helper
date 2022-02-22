@@ -20,7 +20,7 @@ const config = {
       worktag: "./ts/worktag.ts",
   },
   output: {
-    path: path.resolve(__dirname, "js/build"),
+    path: path.resolve(__dirname, "dist/js/build"),
     filename: "[name].js"
   },
   plugins: [

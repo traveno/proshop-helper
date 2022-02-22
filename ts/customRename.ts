@@ -1,3 +1,4 @@
+import * as $ from "jquery";
 import { makePretty } from "./customPO";
 
 // Find our input field that we wish to manipulate

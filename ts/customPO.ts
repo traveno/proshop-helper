@@ -1,3 +1,4 @@
+import * as $ from "jquery";
 import { debugInfo, delayMs } from "./common";
 
 // Add our button

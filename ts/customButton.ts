@@ -1,4 +1,4 @@
-export {};
+import * as $ from "jquery";
 
 function injectButton() {
     /*fetch(chrome.runtime.getURL("customButton.html")).then(r => r.text()).then(html => {

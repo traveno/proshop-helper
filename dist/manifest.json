@@ -19,22 +19,22 @@
   "content_scripts": [
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/workorders/20*/*"],
-      "js": ["./js/libs/jquery-3.0.0.min.js", "./js/build/customButton.js"],
+      "js": ["./js/build/customButton.js"],
       "run_at": "document_end"
     },
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/ots*"],
-      "js": ["./js/libs/jquery-3.0.0.min.js", "./js/build/customCots.js"],
+      "js": ["./js/build/customCots.js"],
       "run_at": "document_end"
     },
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/procncAdmin/fileserver/editfile*"],
-      "js": ["./js/libs/jquery-3.0.0.min.js", "./js/build/customRename.js"],
+      "js": ["./js/build/customRename.js"],
       "run_at": "document_end"
     },
     {
       "matches": ["https://machinesciences.adionsystems.com/procnc/purchaseorders/20*/*"],
-      "js": ["./js/libs/jquery-3.0.0.min.js", "./js/build/customPO.js"],
+      "js": ["./js/build/customPO.js"],
       "run_at": "document_idle"
     }
   ],

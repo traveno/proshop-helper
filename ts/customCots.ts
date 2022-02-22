@@ -1,4 +1,4 @@
-export {};
+import * as $ from "jquery";
 
 if ($("span.user_name").text() == "STEPHEN F") {
     $("table#dataTable tbody tr td:first-child").append(" (<a style=\"color: #F00;\" class=\"testbutton\" href=\"#\">create tag</a>)");

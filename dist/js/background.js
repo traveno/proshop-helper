@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener(
                     // Sometimes slow computers miss this command,
                     // so I add a little delay
                     await delay(250);
-                    debug("background.js", "sending setPortInfo command");
+                    debug("background", "sending setPortInfo command");
                     chrome.tabs.sendMessage(tabWorktag.id, { type: "setPortInfo", portInfo: tabCurrent });
                 });
             });

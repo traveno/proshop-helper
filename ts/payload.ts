@@ -1,3 +1,4 @@
+import * as $ from "jquery";
 import { debugInfo } from "./common";
 
 // Define our global variables

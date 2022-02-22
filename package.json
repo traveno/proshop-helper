@@ -21,5 +21,8 @@
     "build:prod": "webpack --mode=production --node-env=production",
     "watch": "webpack --watch"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "jquery": "^3.6.0"
+  }
 }
