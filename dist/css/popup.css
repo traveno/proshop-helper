@@ -4,9 +4,61 @@ body {
     min-width: 200px;
     min-height: 150px;
     font-size: 10pt;
-    padding: 15px;
+    padding: 15px 15px 15px 15px;
+    background: rgb(255,255,255);
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(185,224,255,1) 100%);
 }
 
 img {
     max-width: 150px;
+}
+
+.btn-grad-enabled {background-image: linear-gradient(to right, #1FA2FF 0%, #12D8FA  51%, #1FA2FF  100%)}
+.btn-grad-enabled {
+    margin: 10px;
+    padding: 15px 25px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;            
+    box-shadow: 0 0 20px #FFF;
+    border-radius: 10px;
+    display: block;
+    border: 0px;
+    font-size: 16pt;
+    width: 150px;
+}
+
+.btn-grad-enabled:hover {
+    background-position: right center; /* change the direction of the change here */
+    color: #fff;
+    text-decoration: none;
+}
+.btn-grad-disabled {background-image: linear-gradient(to right, #EB3349 0%, #F45C43  51%, #EB3349  100%)}
+.btn-grad-disabled {
+    margin: 10px;
+    padding: 15px 25px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;            
+    box-shadow: 0 0 20px #FFF;
+    border-radius: 10px;
+    display: block;
+    border: 0px;
+    font-size: 16pt;
+    width: 150px;
+ }
+
+ .btn-grad-disabled:hover {
+    background-position: right center; /* change the direction of the change here */
+    color: #fff;
+    text-decoration: none;
+ }
+
+#ver {
+    padding: 0;
+    margin: 15px 0 0 0;
 }

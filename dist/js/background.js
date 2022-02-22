@@ -48,3 +48,13 @@ function debug(file, info) {
     if (DEBUG_MODE)
         console.log(file + ": " + info);
 }
+
+chrome.runtime.onInstalled.addListener(function(info) {
+    if (info.reason == "install") {
+        chrome.storage.local.set({ enabled: true });
+        debug("background", "extension installed and enabled");
+    } else if (info.reason == "update") {
+        chrome.storage.local.set({ enabled: true });
+        debug("background", "extension updated");
+    }
+});

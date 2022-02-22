@@ -1,4 +1,35 @@
-export {};
+import * as $ from "jquery";
+import { debugInfo } from "./common";
+
+$("#togglePlugin").on("click", () => {
+    let button: JQuery<HTMLElement> = $("#togglePlugin");
+
+    if (button.hasClass("btn-grad-enabled")) {
+        button.removeClass("btn-grad-enabled");
+        button.addClass("btn-grad-disabled");
+        button.text("DISABLED");
+
+        // Disable extension
+        chrome.storage.local.set({ enabled: false });
+    } else {
+        button.removeClass("btn-grad-disabled");
+        button.addClass("btn-grad-enabled");
+        button.text("ENABLED");
+        
+        // Enable extension
+        chrome.storage.local.set({ enabled: true });
+    }
+});
+
+chrome.storage.local.get(["enabled"], function(result) {
+    if (!result.enabled) {
+        let button: JQuery<HTMLElement> = $("#togglePlugin");
+
+        button.removeClass("btn-grad-enabled");
+        button.addClass("btn-grad-disabled");
+        button.text("DISABLED");
+    }
+});
 
 // Initialize button for generating tag
 /*let generateTag = document.getElementById("generateTag");
@@ -16,15 +47,15 @@ generateTag.addEventListener("click", async () => {
 });*/
 
 chrome.management.getSelf((result) => {
-  document.getElementById("ver").innerHTML = "You are running version " + result.version;
+    document.getElementById("ver").innerHTML = "v" + result.version + "\t\t" + "Stephen Fike";
 });
 
 document.getElementById("openCotsSuite").onclick = () => {
-  chrome.runtime.sendMessage({ type: "openCotsMenu" });
-  window.close();
+    chrome.runtime.sendMessage({ type: "openCotsMenu" });
+    window.close();
 }
 
 document.getElementById("openPartsSuite").onclick = () => {
-  chrome.runtime.sendMessage({ type: "openPartsMenu" });
-  window.close();
+    chrome.runtime.sendMessage({ type: "openPartsMenu" });
+    window.close();
 }
