@@ -21,13 +21,13 @@ img {
     text-transform: uppercase;
     transition: 0.5s;
     background-size: 200% auto;
-    color: white;            
-    box-shadow: 0 0 20px #FFF;
+    color: #FFF;            
     border-radius: 10px;
     display: block;
     border: 0px;
     font-size: 16pt;
-    width: 150px;
+    font-weight: 700;
+    width: 175px;
 }
 
 .btn-grad-enabled:hover {
@@ -43,13 +43,13 @@ img {
     text-transform: uppercase;
     transition: 0.5s;
     background-size: 200% auto;
-    color: white;            
-    box-shadow: 0 0 20px #FFF;
+    color: #FFF;            
     border-radius: 10px;
     display: block;
     border: 0px;
     font-size: 16pt;
-    width: 150px;
+    font-weight: 700;
+    width: 175px;
  }
 
  .btn-grad-disabled:hover {
@@ -58,7 +58,24 @@ img {
     text-decoration: none;
  }
 
+ .btn {
+     width: 175px;
+     color: #000;
+ }
+
 #ver {
     padding: 0;
     margin: 15px 0 0 0;
+    color: #777;
+}
+
+.button-holder {
+    margin-top: 20px;
+    padding-top: 5px;
+    border-top: thin solid #CCC;
+    width: 175px;
+}
+
+.button-holder button {
+    margin-top: 15px;
 }

@@ -9,12 +9,16 @@ $("#togglePlugin").on("click", () => {
         button.addClass("btn-grad-disabled");
         button.text("DISABLED");
 
+        $(".btn").prop("disabled", true);
+
         // Disable extension
         chrome.storage.local.set({ enabled: false });
     } else {
         button.removeClass("btn-grad-disabled");
         button.addClass("btn-grad-enabled");
         button.text("ENABLED");
+
+        $(".btn").prop("disabled", false);
         
         // Enable extension
         chrome.storage.local.set({ enabled: true });
@@ -28,6 +32,8 @@ chrome.storage.local.get(["enabled"], function(result) {
         button.removeClass("btn-grad-enabled");
         button.addClass("btn-grad-disabled");
         button.text("DISABLED");
+
+        $(".btn").prop("disabled", true);
     }
 });
 
