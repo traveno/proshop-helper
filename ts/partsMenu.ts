@@ -1,6 +1,25 @@
 import * as $ from "jquery";
 import { delayMs, debugInfo, getFullDate } from "./common";
 
+enum opTableCol {
+    OP = 0,
+    RESOURCE,
+    OPERATION_DESCRIPTION,
+    OPERATION_TYPE,
+    ROUTINGS,
+    SET_UP,
+    NR_SET_UP,
+    EST_SET_UP,
+    CYCLE,
+    CHANGE_OUT,
+    INSPECTION,
+    NR_INSPECTION,
+    BREAK_DOWN,
+    RUNNING,
+    MIN_PER_PART,
+    EST_MIN_PER_PART
+};
+
 // Keep track of file counts so we know when to refresh
 var numParts: number = 0;
 var numPartsProcessed: number = 0;
@@ -16,7 +35,7 @@ $("#scrapeParts").on("click", () => {
     // Disable button
     $("#scrapeParts").prop("disabled", true);
 
-    debugInfo("partsMenu", "Starting parts scraping alg");
+    debugInfo("partsMenu", "Start parts scraping alg");
 
     // Fetch all parts within ProShop
     $("#status").text("Building list...");
@@ -25,7 +44,7 @@ $("#scrapeParts").on("click", () => {
         let partListDoc: Document = parser.parseFromString(html, "text/html");    
     
         // Build a global parts list
-        let partList: JQuery<HTMLElement> = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip");
+        let partList: JQuery<HTMLElement> = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip").slice(0,5);
         numParts = partList.length;
 
         let delayMultiplier = 0;
@@ -62,34 +81,34 @@ async function scrapeDataFromPart(href: string, msDelay: number) {
             partInfo += $(partDoc.getElementById("horizontalMainAtts_drawinginformation.v000001.latestpartrev.v000001_value")).text() + ",";
 
         // Misc data
-        partInfo += getValueFromOpTable(opTable,  20, 2 ) + ","; // OP 20 Operation Description
-        partInfo += getValueFromOpTable(opTable,  20, 6 ) + ","; // OP 20 NR Set-up
-        partInfo += getValueFromOpTable(opTable,  25, 2 ) + ","; // OP 25 Operation Description
-        partInfo += getValueFromOpTable(opTable,  25, 6 ) + ","; // OP 25 NR Set-up
-        partInfo += getValueFromOpTable(opTable,  30, 2 ) + ","; // OP 30 Operation Description
-        partInfo += getValueFromOpTable(opTable,  30, 6 ) + ","; // OP 30 NR Set-up
-        partInfo += getValueFromOpTable(opTable,  50, 2 ) + ","; // OP 50 Operation Description
-        partInfo += getValueFromOpTable(opTable,  50, 1 ) + ","; // OP 50 Resource
-        partInfo += getValueFromOpTable(opTable,  50, 5 ) + ","; // OP 50 Set-up
-        partInfo += getValueFromOpTable(opTable,  50, 6 ) + ","; // OP 50 NR Set-up
-        partInfo += getValueFromOpTable(opTable,  50, 8 ) + ","; // OP 50 Cycle
-        partInfo += getValueFromOpTable(opTable,  50, 14) + ","; // OP 50 Min/Part
-        partInfo += getValueFromOpTable(opTable,  60, 2 ) + ","; // OP 60 Operation Description
-        partInfo += getValueFromOpTable(opTable,  60, 1 ) + ","; // OP 60 Resource
-        partInfo += getValueFromOpTable(opTable,  60, 5 ) + ","; // OP 60 Set-up
-        partInfo += getValueFromOpTable(opTable,  60, 8 ) + ","; // OP 60 Cycle
-        partInfo += getValueFromOpTable(opTable,  60, 9 ) + ","; // OP 60 Change out
-        partInfo += getValueFromOpTable(opTable,  60, 14) + ","; // OP 60 Min/Part
-        partInfo += getValueFromOpTable(opTable,  60, 10) + ","; // OP 60 Inspection (FAI)
-        partInfo += getValueFromOpTable(opTable,  61, 2 ) + ","; // OP 61 Operation Description
-        partInfo += getValueFromOpTable(opTable,  61, 1 ) + ","; // OP 61 Resource
-        partInfo += getValueFromOpTable(opTable,  61, 5 ) + ","; // OP 61 Set-up
-        partInfo += getValueFromOpTable(opTable,  61, 8 ) + ","; // OP 61 Cycle
-        partInfo += getValueFromOpTable(opTable,  61, 9 ) + ","; // OP 61 Change out
-        partInfo += getValueFromOpTable(opTable,  61, 14) + ","; // OP 61 Min/Part
-        partInfo += getValueFromOpTable(opTable,  61, 10) + ","; // OP 61 Inspection (FAI)
-        partInfo += getValueFromOpTable(opTable, 500, 2 ) + ","; // OP 500 Operation Description
-        partInfo += getValueFromOpTable(opTable, 500, 14) + ","; // OP 500 Min/Part
+        partInfo += getValueFromOpTable(opTable,  20, opTableCol.OPERATION_DESCRIPTION) + ","; // OP 20 Operation Description
+        partInfo += getValueFromOpTable(opTable,  20, opTableCol.NR_SET_UP            ) + ","; // OP 20 NR Set-up
+        partInfo += getValueFromOpTable(opTable,  25, opTableCol.OPERATION_DESCRIPTION) + ","; // OP 25 Operation Description
+        partInfo += getValueFromOpTable(opTable,  25, opTableCol.NR_SET_UP            ) + ","; // OP 25 NR Set-up
+        partInfo += getValueFromOpTable(opTable,  30, opTableCol.OPERATION_DESCRIPTION) + ","; // OP 30 Operation Description
+        partInfo += getValueFromOpTable(opTable,  30, opTableCol.NR_SET_UP            ) + ","; // OP 30 NR Set-up
+        partInfo += getValueFromOpTable(opTable,  50, opTableCol.OPERATION_DESCRIPTION) + ","; // OP 50 Operation Description
+        partInfo += getValueFromOpTable(opTable,  50, opTableCol.RESOURCE             ) + ","; // OP 50 Resource
+        partInfo += getValueFromOpTable(opTable,  50, opTableCol.SET_UP               ) + ","; // OP 50 Set-up
+        partInfo += getValueFromOpTable(opTable,  50, opTableCol.NR_SET_UP            ) + ","; // OP 50 NR Set-up
+        partInfo += getValueFromOpTable(opTable,  50, opTableCol.CYCLE                ) + ","; // OP 50 Cycle
+        partInfo += getValueFromOpTable(opTable,  50, opTableCol.MIN_PER_PART         ) + ","; // OP 50 Min/Part
+        partInfo += getValueFromOpTable(opTable,  60, opTableCol.OPERATION_DESCRIPTION) + ","; // OP 60 Operation Description
+        partInfo += getValueFromOpTable(opTable,  60, opTableCol.RESOURCE             ) + ","; // OP 60 Resource
+        partInfo += getValueFromOpTable(opTable,  60, opTableCol.SET_UP               ) + ","; // OP 60 Set-up
+        partInfo += getValueFromOpTable(opTable,  60, opTableCol.CYCLE                ) + ","; // OP 60 Cycle
+        partInfo += getValueFromOpTable(opTable,  60, opTableCol.CHANGE_OUT           ) + ","; // OP 60 Change out
+        partInfo += getValueFromOpTable(opTable,  60, opTableCol.MIN_PER_PART         ) + ","; // OP 60 Min/Part
+        partInfo += getValueFromOpTable(opTable,  60, opTableCol.INSPECTION           ) + ","; // OP 60 Inspection (FAI)
+        partInfo += getValueFromOpTable(opTable,  61, opTableCol.OPERATION_DESCRIPTION) + ","; // OP 61 Operation Description
+        partInfo += getValueFromOpTable(opTable,  61, opTableCol.RESOURCE             ) + ","; // OP 61 Resource
+        partInfo += getValueFromOpTable(opTable,  61, opTableCol.SET_UP               ) + ","; // OP 61 Set-up
+        partInfo += getValueFromOpTable(opTable,  61, opTableCol.CYCLE                ) + ","; // OP 61 Cycle
+        partInfo += getValueFromOpTable(opTable,  61, opTableCol.CHANGE_OUT           ) + ","; // OP 61 Change out
+        partInfo += getValueFromOpTable(opTable,  61, opTableCol.MIN_PER_PART         ) + ","; // OP 61 Min/Part
+        partInfo += getValueFromOpTable(opTable,  61, opTableCol.INSPECTION           ) + ","; // OP 61 Inspection (FAI)
+        partInfo += getValueFromOpTable(opTable, 500, opTableCol.OPERATION_DESCRIPTION) + ","; // OP 500 Operation Description
+        partInfo += getValueFromOpTable(opTable, 500, opTableCol.MIN_PER_PART         ) + ","; // OP 500 Min/Part
 
         // Fetch the list of 'recent' work orders for this part
         fetch("https://machinesciences.adionsystems.com" + href + "formName=ajaxHomeWorkOrderQuery").then(res => res.text()).then(html => {
@@ -114,9 +133,10 @@ async function scrapeDataFromPart(href: string, msDelay: number) {
                     let mostRecentWO_opTable: JQuery<HTMLElement> = $(mostRecentWODoc).find("table.proshop-table").eq(5);
 
                     // Get the data points we need
-                    partInfo += getValueFromOpTable(mostRecentWO_opTable, 50, 2) + ",";
-                    partInfo += getValueFromOpTable(mostRecentWO_opTable, 60, 2) + ",";
-                    partInfo += getValueFromOpTable(mostRecentWO_opTable, 61, 2) + ",";
+                    // Columns are swapped on the work order OP table (for whatever reason), so beware...
+                    partInfo += getValueFromOpTable(mostRecentWO_opTable, 50, 2) + ","; // OP 50 Resource
+                    partInfo += getValueFromOpTable(mostRecentWO_opTable, 60, 2) + ","; // OP 60 Resource
+                    partInfo += getValueFromOpTable(mostRecentWO_opTable, 61, 2) + ","; // OP 61 Resource
 
                     // Commit partInfo to our CSV string
                     addToCSV(partInfo);
