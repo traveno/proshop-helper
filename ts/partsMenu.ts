@@ -131,6 +131,8 @@ function addToCSV(data: string): void {
     $("#status").text("Processed " + numPartsProcessed + " of " + numParts + "...");
     csvContent += data;
 
+    console.log(data);
+
     // Is the algorithm complete?
     // Download the file!
     if (numPartsProcessed == numParts) {
