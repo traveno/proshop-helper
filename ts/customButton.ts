@@ -1,6 +1,6 @@
 import * as $ from "jquery";
 
-function injectButton() {
+function injectButton(): void {
     /*fetch(chrome.runtime.getURL("customButton.html")).then(r => r.text()).then(html => {
         // Attempt to inject the "Create Work Tag" button into the page
         try {
@@ -32,4 +32,7 @@ if (!location.href.includes("formName="  ) &&
     !location.href.includes("form="      ) &&
     !location.href.includes("customView=") &&
     !location.href.includes("viewName="  ))
-    injectButton();
+    chrome.storage.local.get(["enabled"], function(result) {
+        if (result.enabled)
+            injectButton();
+    });

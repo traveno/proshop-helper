@@ -1,14 +1,20 @@
 import * as $ from "jquery";
 import { debugInfo, delayMs } from "./common";
 
-// Add our button
-$("table.poBody td.clsdHeader:contains(Other Files)").append("</br><button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"prettifyPO\" title=\"Prettify this PO\">Rename All</button>");
+// Add our button if extension is enabled
+chrome.storage.local.get(["enabled"], function(result) {
+    if (result.enabled) {
+        $("table.poBody td.clsdHeader:contains(Other Files)").append("</br><button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"prettifyPO\" title=\"Prettify this PO\">Rename All</button>");
+        $("#prettifyPO").on("click", bulkRename);
+    }
+});
 
 // Keep track of file counts so we know when to refresh
 var numFiles: number = 0;
 var numFilesProcessed: number = 0;
 
-$("#prettifyPO").on("click", () => {
+// Rename all PO files
+function bulkRename(): void {
     // Get all purchase order files
     let editList: JQuery<HTMLElement> = $("td.attValue[align='left'] div.hidden-buttons-wrapper a[title='Edit']");
     // Use a delay multiplier that we pass to our async function
@@ -30,7 +36,7 @@ $("#prettifyPO").on("click", () => {
     // Button was clicked but we found no candidates
     if (numFiles == 0)
         debugInfo("customPO", "nothing found to rename");
-});
+}
 
 async function renameFile(href: string, msDelay: number) {
     // Delay this function to avoid overloading the server
