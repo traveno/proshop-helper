@@ -12,28 +12,28 @@
     "128": "icon128.png"
   },
   "permissions": ["storage", "activeTab", "scripting", "tabs"],
-  "host_permissions": ["https://machinesciences.adionsystems.com/*"],
+  "host_permissions": ["https://*.adionsystems.com/*"],
   "action": {
     "default_popup": "popup.html"
   },
   "content_scripts": [
     {
-      "matches": ["https://machinesciences.adionsystems.com/procnc/workorders/20*/*"],
+      "matches": ["https://*.adionsystems.com/procnc/workorders/20*/*"],
       "js": ["./js/build/customButton.js"],
       "run_at": "document_end"
     },
     {
-      "matches": ["https://machinesciences.adionsystems.com/procnc/ots*"],
+      "matches": ["https://*.adionsystems.com/procnc/ots*"],
       "js": ["./js/build/customCots.js"],
       "run_at": "document_end"
     },
     {
-      "matches": ["https://machinesciences.adionsystems.com/procnc/procncAdmin/fileserver/editfile*"],
+      "matches": ["https://*.adionsystems.com/procnc/procncAdmin/fileserver/editfile*"],
       "js": ["./js/build/customRename.js"],
       "run_at": "document_end"
     },
     {
-      "matches": ["https://machinesciences.adionsystems.com/procnc/purchaseorders/20*/*"],
+      "matches": ["https://*.adionsystems.com/procnc/purchaseorders/20*/*"],
       "js": ["./js/build/customPO.js"],
       "run_at": "document_idle"
     }
@@ -41,7 +41,7 @@
   "web_accessible_resources": [
     {
       "resources": ["./js/libs/customButton.html", "./js/libs/jquery-3.0.0.min.js"],
-      "matches": ["https://machinesciences.adionsystems.com/*"]
+      "matches": ["https://*.adionsystems.com/*"]
     }
   ]
 }
