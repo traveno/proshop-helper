@@ -1,4 +1,4 @@
-import { delayMs, debugInfo } from "./common";
+import { delayMs, debugInfo, getFullDate } from "./common";
 
 // Keep track of file counts so we know when to refresh
 var numParts: number = 0;
@@ -23,14 +23,14 @@ $("#scrapeParts").on("click", () => {
         let partListDoc: Document = parser.parseFromString(html, "text/html");    
     
         // Build a global parts list
-        let partList: JQuery<HTMLElement> = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip").slice(0,20);
+        let partList: JQuery<HTMLElement> = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip");
         numParts = partList.length;
 
         let delayMultiplier = 0;
 
         // Queue up our data scraping work
         $(partList).each(function() {
-            scrapeDataFromPart($(this).attr("href"), (delayMultiplier++) * 500);
+            scrapeDataFromPart($(this).attr("href"), (delayMultiplier++) * 2000);
         });
     });
 });
@@ -90,15 +90,47 @@ async function scrapeDataFromPart(href: string, msDelay: number) {
 
         // TODO Route information into a CSV file for download
         // For now we're simply outputting to the dev console
-        console.log(partInfo);
+        //console.log(partInfo);
+        fetch("https://machinesciences.adionsystems.com" + href + "formName=ajaxHomeWorkOrderQuery").then(res => res.text()).then(html => {
+            let inProcessDoc: Document = parser.parseFromString(html, "text/html");
+            let recentWOList: JQuery<HTMLElement> = $(inProcessDoc).find("table#dataTable tbody tr td:first-of-type a");
 
-    }).then(function() {
-        // Keep track of how many we've processed
-        // This is important because fetch() calls are async
-        numPartsProcessed++;
-        $("#status").text("Processed " + numPartsProcessed + " of " + numParts + "...");
+            if (recentWOList.length == 0) {
+                addToCSV(partInfo + ",,,");
+            } else {
+                let mostRecentWO: JQuery<HTMLElement> = $(inProcessDoc).find("table#dataTable tbody tr td:first-of-type a").first();
+
+                fetch("https://machinesciences.adionsystems.com" + mostRecentWO.attr("href")).then(res => res.text()).then(html => {
+                    let mostRecentWODoc: Document = parser.parseFromString(html, "text/html");
+                    let mostRecentWO_opTable: JQuery<HTMLElement> = $(mostRecentWODoc).find("table.proshop-table").eq(5);
+                    partInfo += getValueFromOpTable(mostRecentWO_opTable, 50, 2) + ",";
+                    partInfo += getValueFromOpTable(mostRecentWO_opTable, 60, 2) + ",";
+                    partInfo += getValueFromOpTable(mostRecentWO_opTable, 61, 2) + ",";
+
+                    addToCSV(partInfo);
+                });
+            }
+        });
     });
 }
+
+function addToCSV(data: string): void {
+    numPartsProcessed++;
+    $("#status").text("Processed " + numPartsProcessed + " of " + numParts + "...");
+    csvContent += data;
+    console.log(data);
+
+    if (numPartsProcessed == numParts) {
+        let encodedURI: string = encodeURI(csvContent);
+        let downloadButton = document.createElement("a");
+        downloadButton.setAttribute("href", encodedURI);
+        downloadButton.setAttribute("download", "allparts_" + getFullDate());
+        document.body.appendChild(downloadButton);
+        downloadButton.click();
+    }
+}
+
+
 
 // This returns the data held in a cell of the op table as a string
 // Empty cells return ""
