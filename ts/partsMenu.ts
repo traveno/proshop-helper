@@ -44,7 +44,7 @@ $("#scrapeParts").on("click", () => {
         let partListDoc: Document = parser.parseFromString(html, "text/html");    
     
         // Build a global parts list
-        let partList: JQuery<HTMLElement> = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip").slice(0,5);
+        let partList: JQuery<HTMLElement> = $(partListDoc).find("table.dataTable tbody tr td:first-of-type > a.htmlTooltip");
         numParts = partList.length;
 
         let delayMultiplier = 0;
