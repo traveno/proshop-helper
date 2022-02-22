@@ -37,4 +37,4 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: true
           title: "Development Build"
-          files: dist
+          files: build-artifact.zip
