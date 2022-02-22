@@ -73,7 +73,7 @@ async function renameFile(href: string, msDelay: number) {
 }
 
 // Shared function from customRename.js
-function makePretty(string: string): string {
+export function makePretty(string: string): string {
     // Check if it's empty, or if we've already prettified the text
     if (string == "" || string.includes("PO") || string.includes("PS"))
         return string;

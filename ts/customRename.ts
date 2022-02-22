@@ -1,4 +1,4 @@
-export {};
+import { makePretty } from "./customPO";
 
 // Find our input field that we wish to manipulate
 var filepath: JQuery<HTMLElement> = $("form#linkEditForm input").eq(1);
@@ -16,9 +16,6 @@ $("#renameFile").on("click", () => {
     if (text == "" || text.includes("PO") || text.includes("PS"))
         return;
 
-    const textExplode: string[] = text.split("_");
-
     // Create our prettified version and insert it into the input field
-    let newText: string = "PO" + textExplode[1].split("-")[0] + " PS" + textExplode[2] + ".pdf";
-    $(filename).val(newText);
+    $(filename).val(makePretty(text));
 });

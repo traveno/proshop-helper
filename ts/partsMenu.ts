@@ -130,8 +130,6 @@ function addToCSV(data: string): void {
     }
 }
 
-
-
 // This returns the data held in a cell of the op table as a string
 // Empty cells return ""
 function getValueFromOpTable(table, opCode, column) {
