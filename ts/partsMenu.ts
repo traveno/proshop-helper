@@ -5,7 +5,8 @@ import { delayMs, debugInfo, getFullDate } from "./common";
 var numParts: number = 0;
 var numPartsProcessed: number = 0;
 
-var csvContent = "data:text/csv;charset=utf-8,";
+// Our CSV builder string
+var csvContent: string = "data:text/csv;charset=utf-8,";
 
 $("#scrapeParts").on("click", () => {
     // Reset our global vars
@@ -48,6 +49,7 @@ async function scrapeDataFromPart(href: string, msDelay: number) {
         // Grab a reference to the large OP table
         let opTable: JQuery<HTMLElement> = $(partDoc).find("table.proshop-table").eq(4);
 
+        // Init partInfo which will later be committed to our overall CSV string
         let partInfo: string = "";
 
         // Internal part number
@@ -89,25 +91,34 @@ async function scrapeDataFromPart(href: string, msDelay: number) {
         partInfo += getValueFromOpTable(opTable, 500, 2 ) + ","; // OP 500 Operation Description
         partInfo += getValueFromOpTable(opTable, 500, 14) + ","; // OP 500 Min/Part
 
-        // TODO Route information into a CSV file for download
-        // For now we're simply outputting to the dev console
-        //console.log(partInfo);
+        // Fetch the list of 'recent' work orders for this part
         fetch("https://machinesciences.adionsystems.com" + href + "formName=ajaxHomeWorkOrderQuery").then(res => res.text()).then(html => {
             let inProcessDoc: Document = parser.parseFromString(html, "text/html");
+
+            // Navigate the table and obtain a list of recent work orders
             let recentWOList: JQuery<HTMLElement> = $(inProcessDoc).find("table#dataTable tbody tr td:first-of-type a");
 
+            // Check if the list is zero length
             if (recentWOList.length == 0) {
+                // Commit partInfo to our CSV string
                 addToCSV(partInfo + ",,,");
             } else {
+                // Get the top-most work order (aka most recent)
                 let mostRecentWO: JQuery<HTMLElement> = $(inProcessDoc).find("table#dataTable tbody tr td:first-of-type a").first();
 
+                // Fetch the most recent work order page
                 fetch("https://machinesciences.adionsystems.com" + mostRecentWO.attr("href")).then(res => res.text()).then(html => {
                     let mostRecentWODoc: Document = parser.parseFromString(html, "text/html");
+
+                    // Get the op table from the work order page
                     let mostRecentWO_opTable: JQuery<HTMLElement> = $(mostRecentWODoc).find("table.proshop-table").eq(5);
+
+                    // Get the data points we need
                     partInfo += getValueFromOpTable(mostRecentWO_opTable, 50, 2) + ",";
                     partInfo += getValueFromOpTable(mostRecentWO_opTable, 60, 2) + ",";
                     partInfo += getValueFromOpTable(mostRecentWO_opTable, 61, 2) + ",";
 
+                    // Commit partInfo to our CSV string
                     addToCSV(partInfo);
                 });
             }
@@ -119,9 +130,11 @@ function addToCSV(data: string): void {
     numPartsProcessed++;
     $("#status").text("Processed " + numPartsProcessed + " of " + numParts + "...");
     csvContent += data;
-    console.log(data);
 
+    // Is the algorithm complete?
+    // Download the file!
     if (numPartsProcessed == numParts) {
+        $("#status").text("Complete!");
         let encodedURI: string = encodeURI(csvContent);
         let downloadButton = document.createElement("a");
         downloadButton.setAttribute("href", encodedURI);
@@ -133,13 +146,13 @@ function addToCSV(data: string): void {
 
 // This returns the data held in a cell of the op table as a string
 // Empty cells return ""
-function getValueFromOpTable(table, opCode, column) {
-    let tableRows = $(table).find("tbody tr");
-    let result = "";
+function getValueFromOpTable(table: JQuery<HTMLElement>, opCode: number, column: number): string {
+    let tableRows: JQuery<HTMLElement> = $(table).find("tbody tr");
+    let result: string = "";
 
     $(tableRows).each(function() {
-        let rowOp = $(this).find("td:first-of-type > a").text();
-        if (rowOp == opCode) {
+        let rowOp: string = $(this).find("td:first-of-type > a").text();
+        if (rowOp == opCode.toString()) {
             if ($(this).find("td").eq(column).children().length) {
                 result = $(this).find("td").eq(column).eq(0).text();
             } else {
