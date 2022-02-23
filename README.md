@@ -1,23 +1,19 @@
-![ProShop Logo](https://raw.githubusercontent.com/traveno/proshop-helper/main/dist/img/ph-logo.png)
+![Logo](https://raw.githubusercontent.com/traveno/proshop-helper/main/dist/img/ph-logo.png)
 
 ![Release workflow](https://github.com/traveno/proshop-helper/actions/workflows/node.js.release.yml/badge.svg) ![Pre-Release workflow](https://github.com/traveno/proshop-helper/actions/workflows/node.js.pre-release.yml/badge.svg)
 
-# ProShop Helper
-
-*Like Hamburger Helper but better.*
-
-**CAUTION: Project is currently undergoing migration to TypeScript**
-
-This is a Chrome extension that adds additional functionality to the ProShop ERP system. Current features include:
+I am a Chrome extension that adds additional functionality to the ProShop ERP solution. Current features include:
 
  - [x] Robust work tag generation tailored for raw materials
  - [ ] COTS tag generation
  - [x] Standardized individual file names
  - [x] Automated file formatting over entire purchase orders
+ - [x] Data extraction from global parts library
+ - [ ] Daily report summarizing active work for each department
 
 # Building
 
-A Node.js installation that is visible in your PATH is required. The following commands are executed from the root project directory.
+A node.js installation that is visible in your PATH is required. The following commands are executed from the root project directory.
 
 Install the project's dependencies:
 
@@ -30,6 +26,8 @@ Source code can be built by running:
 Then add the plugin to Chrome by navigating to Extensions and enabling Developer Mode. Load the `dist` folder as an unpacked extension.
 
 # Quick Overview
+
+![Popup image](https://raw.githubusercontent.com/traveno/proshop-helper/main/.github/popup.png)
 
 ## Work Tag Generation
 
