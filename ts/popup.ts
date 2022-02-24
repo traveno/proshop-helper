@@ -65,3 +65,8 @@ document.getElementById("openPartsSuite").onclick = () => {
     chrome.runtime.sendMessage({ type: "openPartsMenu" });
     window.close();
 }
+
+document.getElementById("openReporting").onclick = () => {
+    chrome.runtime.sendMessage({ type: "openReportMenu" });
+    window.close();
+}

@@ -29,6 +29,10 @@ chrome.runtime.onMessage.addListener(
         chrome.windows.create({ url: "partsMenu.html", width: 500, height: 375, type: "popup" });
     }
 
+    if (request.type == "openReportMenu") {
+        chrome.windows.create({ url: "reportMenu.html", width: 500, height: 375, type: "popup" });
+    }
+
     if (request.type == "debug") {
         debug(request.file, request.info);
     }
