@@ -2,8 +2,8 @@
   "name": "ProShop Helper",
   "description": "Enhancement package for the ProShop ERP solution.",
   "author": "Stephen Fike",
-  "version": "4.1.0",
-  "version_name": "4.1.0",
+  "version": "4.2.0",
+  "version_name": "4.2.0",
   "manifest_version": 3,
   "background": {
     "service_worker": "./js/background.js"
@@ -17,6 +17,11 @@
     "default_popup": "popup.html"
   },
   "content_scripts": [
+    {
+      "matches": ["https://*.adionsystems.com/procnc/*"],
+      "js": ["./js/build/permissions.js"],
+      "run_at": "document_idle"
+    },
     {
       "matches": ["https://*.adionsystems.com/procnc/workorders/20*/*"],
       "js": ["./js/build/customButton.js"],

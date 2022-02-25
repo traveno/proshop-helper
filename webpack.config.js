@@ -18,6 +18,8 @@ const config = {
       payload: "./ts/payload.ts",
       popup: "./ts/popup.ts",
       worktag: "./ts/worktag.ts",
+      permissions: "./ts/permissions.ts",
+      reportMenu: "./ts/report/reportMenu.ts"
   },
   output: {
     path: path.resolve(__dirname, "dist/js/build"),

@@ -18,7 +18,7 @@ $("#togglePlugin").on("click", () => {
         button.addClass("btn-grad-enabled");
         button.text("ENABLED");
 
-        $(".btn").prop("disabled", false);
+        checkPermissions();
         
         // Enable extension
         chrome.storage.local.set({ enabled: true });
@@ -34,8 +34,29 @@ chrome.storage.local.get(["enabled"], function(result) {
         button.text("DISABLED");
 
         $(".btn").prop("disabled", true);
-    }
+    } else
+        checkPermissions();
 });
+
+function checkPermissions(): void {
+    
+
+    chrome.storage.local.get(["perm_cots", "perm_parts", "perm_reporting"], function(perms) {
+        if (perms.perm_cots)
+            $("#openCotsSuite").prop("disabled", false);
+        else
+            $("#openCotsSuite").prop("disabled", true);
+        if (perms.perm_parts)
+            $("#openPartsSuite").prop("disabled", false);
+        else
+            $("#openPartsSuite").prop("disabled", true);
+        if (perms.perm_reporting)
+            $("#openReporting").prop("disabled", false);
+        else
+            $("#openReporting").prop("disabled", true);
+    });
+
+}
 
 // Initialize button for generating tag
 /*let generateTag = document.getElementById("generateTag");
