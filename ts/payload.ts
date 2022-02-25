@@ -12,6 +12,9 @@ var searchedPOs = new Array();
 // Our communication port
 var port = null;
 
+// Our ProShop base URL
+var baseURL: string = "";
+
 // Add listener to assign our global port variable when connected to
 chrome.runtime.onConnect.addListener(openPort);
 
@@ -34,7 +37,13 @@ function closePort() {
 function processPort(message) {
     debugInfo("payload", "processing port data");
     if (message.type == "executePayload") {
-        scrapeData();
+        chrome.storage.local.get(["ps_url"], function(result) {
+            if (result.ps_url != undefined) {
+                baseURL = result.ps_url;
+                scrapeData();
+            }
+        });
+            
     }
 }
 
@@ -66,7 +75,7 @@ function scrapeData() {
     port.postMessage({ type: "woNumber", data: woNumber });
 
     // Load up the part stock information for this WO number
-    fetch("https://machinesciences.adionsystems.com/procnc/workorders/" + woNumber + "$formName=partStockStatus").then(res => res.text()).then(html => {
+    fetch(baseURL + "/procnc/workorders/" + woNumber + "$formName=partStockStatus").then(res => res.text()).then(html => {
         const parser = new DOMParser();
         const partStockDoc = parser.parseFromString(html, "text/html");
 
@@ -121,7 +130,7 @@ function scrapeData() {
             }
 
             // Load up the purchase order
-            fetch("https://machinesciences.adionsystems.com/procnc/purchaseorders/" + partStock_poNumber).then(res => res.text()).then(html => {
+            fetch(baseURL + "/procnc/purchaseorders/" + partStock_poNumber).then(res => res.text()).then(html => {
                 const poDoc = parser.parseFromString(html, "text/html");
 
                 // Get a list of all line items in this purchase order

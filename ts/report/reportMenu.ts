@@ -17,6 +17,14 @@ interface PSCache {
 
 }
 
+// Our base ProShop URL
+var baseURL = "";
+
+chrome.storage.local.get(["ps_url"], function(result) {
+    if (result.ps_url != undefined)
+        baseURL = result.ps_url;
+});
+
 var workorderCache: PSWorkOrders = new Array();
 
 $("#cache-input").on("change", function() {
@@ -40,7 +48,7 @@ $("#cache-input").on("change", function() {
 $("#get-data").on("click", function() {
     $("#cache-status").text("BUILDING");
 
-    fetch("https://machinesciences.adionsystems.com/procnc/workorders/searchresults$queryScope=global&queryName=query56&pName=workorders").then(res => res.text()).then(html => {
+    fetch(baseURL + "/procnc/workorders/searchresults$queryScope=global&queryName=query56&pName=workorders").then(res => res.text()).then(html => {
         let parser: DOMParser = new DOMParser();
         let doc: Document = parser.parseFromString(html, "text/html");
 
@@ -50,7 +58,10 @@ $("#get-data").on("click", function() {
             let woList_index: string = $(this).find("td:first-of-type > a.htmlTooltip").text();
             let woList_status: string = $(this).find("td:nth-of-type(10)").text();
 
-            workorderCache.push({ status: woList_status, index: woList_index });
+            workorderCache.push({
+                status: woList_status, 
+                index: woList_index 
+            });
         });
     }).then(() => {
         console.log(workorderCache);

@@ -1,12 +1,18 @@
 import * as $ from "jquery";
 import { debugInfo, delayMs } from "./common";
 
+// Our ProShop base URL
+var baseURL: string = "";
+
 // Add our button if extension is enabled
-chrome.storage.local.get(["enabled"], function(result) {
+chrome.storage.local.get(["enabled", "ps_url"], function(result) {
     if (result.enabled) {
         $("table.poBody td.clsdHeader:contains(Other Files)").append("</br><button class=\"btn btn-raised btn-secondary\" type=\"button\" id=\"prettifyPO\" title=\"Prettify this PO\">Rename All</button>");
         $("#prettifyPO").on("click", bulkRename);
     }
+
+    if (result.ps_url != undefined)
+        baseURL = result.ps_url;
 });
 
 // Keep track of file counts so we know when to refresh
@@ -43,7 +49,7 @@ async function renameFile(href: string, msDelay: number) {
     await delayMs(msDelay);
     
     // Fetch the rename file page using the edit button's href
-    fetch("https://machinesciences.adionsystems.com" + href).then(res => res.text()).then(html => {
+    fetch(baseURL + href).then(res => res.text()).then(html => {
         let parser = new DOMParser();
         let editFileDoc = parser.parseFromString(html, "text/html");
 
@@ -57,7 +63,7 @@ async function renameFile(href: string, msDelay: number) {
         const data: URLSearchParams = new URLSearchParams(new FormData(editFileDoc.getElementById("linkEditForm") as HTMLFormElement) as URLSearchParams);
 
         // Fetch the action page for the form and submit by POST
-        fetch("https://machinesciences.adionsystems.com" + $(editFileDoc).find("form#linkEditForm").attr("action"), {
+        fetch(baseURL + $(editFileDoc).find("form#linkEditForm").attr("action"), {
             method: "POST",
             body: data
         }).then(() => {

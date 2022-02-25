@@ -27,7 +27,19 @@ var numPartsProcessed: number = 0;
 // Our CSV builder string
 var csvContent: string = "data:text/csv;charset=utf-8,";
 
+// Our ProShop base URL
+var baseURL: string = "";
+
 $("#scrapeParts").on("click", () => {
+    chrome.storage.local.get(["ps_url"], function(result) {
+        if (result.ps_url != undefined) {
+            baseURL = result.ps_url;
+            scrapeData();
+        }
+    });
+});
+
+function scrapeData(): void {
     // Reset our global vars
     numParts = 0;
     numPartsProcessed = 0;
@@ -39,7 +51,7 @@ $("#scrapeParts").on("click", () => {
 
     // Fetch all parts within ProShop
     $("#status").text("Building list...");
-    fetch("https://machinesciences.adionsystems.com/procnc/parts/searchresults$queryScope=global&queryName=query1&pName=parts").then(res => res.text()).then(html => {
+    fetch(baseURL + "/procnc/parts/searchresults$queryScope=global&queryName=query1&pName=parts").then(res => res.text()).then(html => {
         let parser: DOMParser = new DOMParser();
         let partListDoc: Document = parser.parseFromString(html, "text/html");    
     
@@ -54,14 +66,14 @@ $("#scrapeParts").on("click", () => {
             scrapeDataFromPart($(this).attr("href"), (delayMultiplier++) * 2000);
         });
     });
-});
+}
 
 async function scrapeDataFromPart(href: string, msDelay: number) {
     // Delay this function to avoid overloading the server
     await delayMs(msDelay);
     
     // Fetch the part level page
-    fetch("https://machinesciences.adionsystems.com" + href).then(res => res.text()).then(html => {
+    fetch(baseURL + href).then(res => res.text()).then(html => {
         let parser: DOMParser = new DOMParser();
         let partDoc: Document = parser.parseFromString(html, "text/html");
 
@@ -111,7 +123,7 @@ async function scrapeDataFromPart(href: string, msDelay: number) {
         partInfo += getValueFromOpTable(opTable, 500, opTableCol.MIN_PER_PART         ) + ","; // OP 500 Min/Part
 
         // Fetch the list of 'recent' work orders for this part
-        fetch("https://machinesciences.adionsystems.com" + href + "formName=ajaxHomeWorkOrderQuery").then(res => res.text()).then(html => {
+        fetch(baseURL + href + "formName=ajaxHomeWorkOrderQuery").then(res => res.text()).then(html => {
             let inProcessDoc: Document = parser.parseFromString(html, "text/html");
 
             // Navigate the table and obtain a list of recent work orders
@@ -126,7 +138,7 @@ async function scrapeDataFromPart(href: string, msDelay: number) {
                 let mostRecentWO: JQuery<HTMLElement> = $(inProcessDoc).find("table#dataTable tbody tr td:first-of-type a").first();
 
                 // Fetch the most recent work order page
-                fetch("https://machinesciences.adionsystems.com" + mostRecentWO.attr("href")).then(res => res.text()).then(html => {
+                fetch(baseURL + mostRecentWO.attr("href")).then(res => res.text()).then(html => {
                     let mostRecentWODoc: Document = parser.parseFromString(html, "text/html");
 
                     // Get the op table from the work order page

@@ -22,23 +22,7 @@ chrome.runtime.onMessage.addListener(
 function processPort(message) {
     if (message.type == "woNumber") {
         $("#title").html("Tag for " + message.data);
-
-        // Loop through our four tags
-        for (let i = 1; i <= 4; i++) {
-            var qrcode = new QRCode("qr-code" + i, {
-                width: 192,
-                height: 192,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.L
-            });
-
-            // Generate QR code
-            qrcode.makeCode("https://machinesciences.adionsystems.com/procnc/workorders/" + message.data);
-
-            // Set the correct WO#
-            $("#work-order" + i).html(message.data);
-        }
+        generateQRCodes(message.data);
 
         // Update the loading text to look fancy
         $("#loadingText").html("Searching part stocks</br>and purchase orders...");
@@ -60,6 +44,29 @@ function processPort(message) {
     if (message.type == "finishedSearch") {
         createPartStockButtons();
     }
+}
+
+function generateQRCodes(woNumber: string): void {
+    chrome.storage.local.get(["ps_url"], function(result) {
+        if (result.ps_url != undefined) {
+            // Loop through our four tags
+            for (let i = 1; i <= 4; i++) {
+                var qrcode = new QRCode("qr-code" + i, {
+                    width: 192,
+                    height: 192,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                });
+
+                // Generate QR code
+                qrcode.makeCode(result.ps_url + "/procnc/workorders/" + woNumber);
+
+                // Set the correct WO#
+                $("#work-order" + i).html(woNumber);
+            }
+        }
+    });
 }
 
 function createPartStockButtons() {
