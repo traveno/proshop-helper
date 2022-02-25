@@ -1,0 +1,53 @@
+.cache-controls > label {
+    cursor: pointer;
+    padding: 7px;
+    background-color: #DDD;
+    border-radius: 3px;
+    font-size: 12pt;
+    min-height: 40px;
+    font-weight: 400;
+ }
+
+.cache-controls > button {
+    cursor: pointer;
+    padding: 5px 7px;
+    margin: 0;
+    background-color: #DDD;
+    border-radius: 3px;
+    font-size: 12pt;
+    border: 0;
+    height: 32px;
+    font-weight: 400;
+    font-family: 'Courier New', Courier, monospace;
+ }
+
+ .cache-controls > h2 {
+     margin-top: 0;
+ }
+ 
+ #cache-input {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+ }
+
+ #cache {
+    border: thin solid #000;
+    padding: 15px;
+    height: 125px;
+    font-family: 'Courier New', Courier, monospace;
+ }
+ 
+.cache-controls {
+     float: left;
+ }
+
+.cache-details {
+     float: right;
+     
+ }
+
+ #cache-status {
+   font-size: 40pt;
+   margin: 0;
+ }

@@ -6,13 +6,28 @@
     <!-- Import materialize.css -->
     <!-- <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/> -->
     <title>ProShop Helper - Reporting</title>
-    <style>body { padding: 50px; }</style>
+    <style>body { padding: 25px; }</style>
+    <link rel="stylesheet" href="css/reportMenu.css">
   </head>
   <body>
-    <h3>Cache DB</h3>
-    <input type="file" id="cache_input" name="Load cache file">
-    <button id="cache_load">Load cache</button>
-    <button id="cache_save">Save cache</button>
+    <div id="cache">
+      <div class="cache-controls">
+        <h2>Cache Controls</h2>
+        <input type="file" id="cache-input" name="Load cache file"></input>
+        <label for="cache-input">Load</label>
+        <button id="cache_save">Save</button>
+        <button id="cache_save">New</button>
+      </div>
+      <div class="cache-details">
+        <p id="cache-status">ALL GOOD</p>
+        <p>Entries: <span id="cache-entries"></span></p>
+        <p>Timestamp: <span id="cache-timestamp"></span></p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="get-data">Get/Update HAAS Data</button>
+    </div>
 
     <!-- Scripts -->
     <script src="js/build/reportMenu.js"></script>
