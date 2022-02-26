@@ -1,5 +1,12 @@
 import * as $ from "jquery";
 
+
+// Our base ProShop URL
+var baseURL = "";
+
+// Global vars
+var cache: PSCache = {} as PSCache;
+
 enum PSWorkOrder_Status { ACTIVE = 0, MANUFACTURING_COMPLETE, INVOIVED, CANCELLED }
 
 interface PSWorkOrder {
@@ -9,23 +16,21 @@ interface PSWorkOrder {
     //description: string,
     //customer: string,
 }
+
 interface PSWorkOrders extends Array<PSWorkOrder>{};
 
 interface PSCache {
     timestamp: Date,
     workorders: PSWorkOrders,
-
 }
 
-// Our base ProShop URL
-var baseURL = "";
 
 chrome.storage.local.get(["ps_url"], function(result) {
     if (result.ps_url != undefined)
         baseURL = result.ps_url;
 });
 
-var workorderCache: PSWorkOrders = new Array();
+
 
 $("#cache-input").on("change", function() {
     let reader = new FileReader();
@@ -36,12 +41,11 @@ $("#cache-input").on("change", function() {
     reader.onloadend = readerEvent => {
         let content: string = readerEvent.target.result as string;
 
-        let parse: PSWorkOrders = JSON.parse(content) as PSWorkOrders;
+        let parse: PSCache = JSON.parse(content) as PSCache;
 
-        for (let index of parse) {
-            //console.log(index);
-            //console.log(index.status === PSWorkOrder_Status.ACTIVE);
-        }    
+
+        cache = parse;
+        console.log(parse);  
     }
 });
 
@@ -54,17 +58,34 @@ $("#get-data").on("click", function() {
 
         let woList: JQuery<HTMLElement> = $(doc).find("table.dataTable tbody tr");
 
+        cache.timestamp = new Date();
+        cache.workorders = new Array();
+
         $(woList).each(function() {
             let woList_index: string = $(this).find("td:first-of-type > a.htmlTooltip").text();
             let woList_status: string = $(this).find("td:nth-of-type(10)").text();
 
-            workorderCache.push({
+            cache.workorders.push({
                 status: woList_status, 
                 index: woList_index 
             });
         });
     }).then(() => {
-        console.log(workorderCache);
-        $("#cache-entries").text(workorderCache.length);
+        console.log(cache);
+        $("#cache-entries").text(cache.workorders.length);
     });
+});
+
+$("#cache_save").on("click", function() {
+    if (cache.timestamp == undefined) {
+        console.log("undefined")
+        return;
+    }
+
+    const data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cache));
+
+    let downloadButton = document.createElement("a");
+    downloadButton.setAttribute("href", data);
+    downloadButton.setAttribute("download", "cache_" + new Date() + ".pro_cache");
+    downloadButton.click();
 });
