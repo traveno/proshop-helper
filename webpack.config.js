@@ -52,6 +52,7 @@ const config = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
   },
+  devtool: "cheap-source-map"
 };
 
 module.exports = () => {
