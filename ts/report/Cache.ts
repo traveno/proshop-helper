@@ -95,30 +95,55 @@ export class PS_Cache {
         return temp;
     }
 
-    fetchWorkOrder(index: string, callback?: any) {
-        fetch(BASE_URL + "/procnc/workorders/" + index).then(res => res.text()).then(html => {
-            let parser: DOMParser = new DOMParser();
-            let doc: Document = parser.parseFromString(html, "text/html");
+    fetchWorkOrder(index: string, callback?: any): Promise<void> {
+        return new Promise(resolve => {
+            if (index === undefined) {
+                console.log("null index");
+                resolve();
+            }
 
-            let wo_Status: string = $(doc).find("#horizontalMainAtts_status_value").text();
-            let opTable: JQuery<HTMLElement> = $(doc).find("table.proshop-table").eq(5);
-
-            let wo: PS_WorkOrder = new PS_WorkOrder({
-                index: index,
-                status: parseStatusToEnum(wo_Status),
-                opTable: processOpTable(opTable)
+            fetch(BASE_URL + "/procnc/workorders/" + index).then(handleFetchErrors).then(res => res.text()).then(html => {
+                let parser: DOMParser = new DOMParser();
+                let doc: Document = parser.parseFromString(html, "text/html");
+    
+                let wo_Status: string = $(doc).find("#horizontalMainAtts_status_value").text();
+                let opTable: JQuery<HTMLElement> = $(doc).find("table.proshop-table").eq(5);
+    
+                let wo: PS_WorkOrder = new PS_WorkOrder({
+                    index: index,
+                    status: parseStatusToEnum(wo_Status),
+                    opTable: processOpTable(opTable)
+                });
+    
+                // If this already exists in our cache, delete old and insert new
+                let duplicateFinder = this.workorders.find(elem => elem.index === wo.index);
+                if (duplicateFinder !== undefined) 
+                    this.workorders.splice(this.workorders.indexOf(duplicateFinder), 1);
+    
+                this.workorders.push(wo);
+            }).then(() => {
+                if (callback)
+                    callback();
+                resolve();
+            }).catch(error => {
+                console.log(error); 
             });
-
-            // If this already exists in our cache, delete old and insert new
-            let duplicateFinder = this.workorders.find(elem => elem.index === wo.index);
-            if (duplicateFinder !== undefined) 
-                this.workorders.splice(this.workorders.indexOf(duplicateFinder), 1);
-
-            this.workorders.push(wo);
-        }).then(() => {
-            if (callback)
-                callback();
         });
+    }
+
+    verify(): boolean {
+        console.log("Check for duplicates...");
+        for (let wo of this.workorders) {
+            for (let test of this.workorders) {
+                if (this.workorders.indexOf(wo) !== this.workorders.indexOf(test)) {
+                    console.log("I found a duplicate! Invalid cache");
+                    return false;
+                }
+            }
+        }
+
+        console.log("All checks passed!");
+        return true;
     }
 }
 
@@ -176,4 +201,11 @@ export function parseStatusToEnum(inputString: string): PS_WorkOrder_Status {
         return PS_WorkOrder_Status.SHIPPED;
     else 
         return PS_WorkOrder_Status.UNKNOWN;
+}
+
+
+function handleFetchErrors(response) {
+    if (!response.ok)
+        throw Error(response.statusText);
+    return response;
 }
