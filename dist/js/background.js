@@ -38,7 +38,7 @@ chrome.runtime.onMessage.addListener(
     if (request.type == "openReportMenu") {
         chrome.storage.local.get(["perm_reporting"], function (result) {
             if (result.perm_reporting)
-                chrome.windows.create({ url: "reportMenu.html", width: 640, height: 750, type: "popup" });
+                chrome.windows.create({ url: "reportMenu.html", width: 1280, height: 1000, type: "popup" });
         });
     }
 
@@ -65,11 +65,13 @@ function debug(file, info) {
 chrome.runtime.onInstalled.addListener(function(info) {
     if (info.reason == "install") {
         chrome.storage.local.set({ enabled: true });
-        chrome.storage.local.set({ perm_cots: false, perm_parts: false, perm_reporting: false });
+        chrome.storage.local.set({ perm_cots: true, perm_parts: true, perm_reporting: true });
         debug("background", "extension installed and enabled");
     } else if (info.reason == "update") {
         chrome.storage.local.set({ enabled: true });
-        chrome.storage.local.set({ perm_cots: false, perm_parts: false, perm_reporting: false });
+        chrome.storage.local.set({ perm_cots: true, perm_parts: true, perm_reporting: true });
         debug("background", "extension updated");
     }
 });
+
+chrome.storage.local.set({ ps_url: "https://machinesciences.adionsystems.com" });
