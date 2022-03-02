@@ -5,10 +5,15 @@ import { PS_WorkOrder, PS_WorkOrder_Status } from './WorkOrder';
 // Interfaces
 export interface PS_Status_Update {
     status?: string
+    percent?: number;
+}
+
+export interface PS_Update_Options {
+    fetchInvoiced?: boolean;
 }
 
 // Constants
-const MAX_CONCURRENT_REQUESTS: number = 10;
+const MAX_CONCURRENT_REQUESTS: number = 3;
 export var BASE_URL: string;
 
 // Global vars
@@ -19,16 +24,17 @@ var cache_updateTotal: number = 0;
 var statusUpdateCallback: any = undefined;
 
 export function newCache(): void {
-    if (!cache)
-        cache = new PS_Cache();
+    cache = new PS_Cache();
 
     // Haas and DMU
-    buildUpdateList(["query56", "query55"]);
+    buildUpdateList(["query55", "query56", "query57", "query58", "query59"]);
 }
 
-export function loadCache(file: File): void {
-    cache = new PS_Cache(file);
+export async function loadCache(file: File): Promise<void> {
+    cache = new PS_Cache();
+    await cache.loadFromFile(file);
     cache.verify();
+    signalStatusUpdateCallback({ status: "Imported cache" });
 }
 
 export function saveCache(): void {
@@ -36,6 +42,8 @@ export function saveCache(): void {
         console.log("Cache does not exist");
         return;
     }
+
+    cache.updateSaveTimestamp();
 
     console.log("Saving cache");
 
@@ -45,13 +53,12 @@ export function saveCache(): void {
     download.setAttribute("href", data);
     download.setAttribute("download", "cache_" + new Date() + ".pro_cache");
     download.click();
-
-    cache.updateSaveTimestamp();
 }
 
-export async function buildUpdateList(queries: string[]): Promise<void> {
+export async function buildUpdateList(queries: string[], options?: PS_Update_Options): Promise<void> {
     // Reset related cache vars
     cache_updateList = new Array();
+    console.log(new Date());
 
     // Fetch that data!
     for (let query of queries) {
@@ -66,6 +73,8 @@ export async function buildUpdateList(queries: string[]): Promise<void> {
     // Begin updating our cache
     for (let i = 0; i < MAX_CONCURRENT_REQUESTS; i++)
         updateCache();
+
+    cache.updateDataTimestamp();
 }
 
 export function fetchProShopQuery(query: string): Promise<boolean> {
@@ -85,9 +94,13 @@ export function fetchProShopQuery(query: string): Promise<boolean> {
                 if (!cache.containsWorkOrder(woList_index))
                     cache_updateList.push(woList_index);
                 else
-                    if (cache.containsWorkOrder(woList_index).getStatus() === PS_WorkOrder_Status.ACTIVE ||
-                        woList_status === PS_WorkOrder_Status.ACTIVE) 
+                    if (woList_status !== PS_WorkOrder_Status.INVOICED && woList_status !== PS_WorkOrder_Status.COMPLETE &&
+                        woList_status !== PS_WorkOrder_Status.CANCELED)
                         cache_updateList.push(woList_index);
+
+                    /*if (cache.containsWorkOrder(woList_index).getStatus() === PS_WorkOrder_Status.ACTIVE ||
+                        woList_status === PS_WorkOrder_Status.ACTIVE) 
+                        cache_updateList.push(woList_index);*/
             });
     
             console.log("Found " + woList.length + " entries for " + query);
@@ -101,14 +114,18 @@ export function fetchProShopQuery(query: string): Promise<boolean> {
 async function updateCache(): Promise<void> {
     if (!cache_updateList.length)
         return;
-    else if (cache_updateList.length === 1)
+    else if (cache_updateList.length === 1) {
         await cache.fetchWorkOrder(cache_updateList.pop());
-    else {
+        console.log(new Date());
+    } else {
         await cache.fetchWorkOrder(cache_updateList.pop(), updateCache);
     }
 
     cache_updateIndex++;
-    signalStatusUpdateCallback({ status: getUpdateRemaining() + " remaining..." });
+    signalStatusUpdateCallback({
+        status: getUpdateRemaining() + " remaining...",
+        percent: cache_updateIndex / cache_updateTotal * 100 
+    });
 }
 
 export function setBaseURL(url: string) {
