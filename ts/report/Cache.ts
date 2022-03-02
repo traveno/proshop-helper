@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 import { PS_WorkOrder, PS_WorkOrder_OpRows, PS_WorkOrder_OpRow, PS_WorkOrder_Status } from './WorkOrder';
-import { BASE_URL, matchesUpdateCriteria, PS_Update_Options } from './ProData';
+import { BASE_URL, PS_Update_Options } from './ProData';
 
 export enum PS_Cache_Status { EMPTY = 0, OUTDATED, OK, ERROR, UNSAVED_CHANGES }
 
@@ -55,11 +55,11 @@ export class PS_Cache {
             return PS_Cache_Status.ERROR;
     }
 
-    getMatchingWorkOrders(options: PS_Update_Options): string[] {
+    getMatchingUpdateCriteria(options: PS_Update_Options): string[] {
         let temp: string[] = new Array();
 
         for (let wo of this.workorders) {
-            if (matchesUpdateCriteria(wo.status, options))
+            if (wo.matchesUpdateCriteria(options))
                 temp.push(wo.index);
         }
         
