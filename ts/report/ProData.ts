@@ -8,17 +8,18 @@ export interface PS_Status_Update {
     status?: string;
     log?: string;
     percent?: number;
+    disableFetchButton?: boolean;
 }
 
 export interface PS_Update_Options {
     // Status
-    fetchActive: boolean;
-    fetchMfgCompelete: boolean;
-    fetchShipped: boolean;
-    fetchOnHold: boolean;
-    fetchCanceled: boolean;
-    fetchComplete: boolean;
-    fetchInvoiced: boolean;
+    statuses: PS_WorkOrder_Status[];
+    // Department queries for remote fetching
+    queries: string[];
+    // Machines for matching within cache
+    machines: string[];
+    // Fetch from ProShop?
+    fetchExternal: boolean;
     fetchInternal: boolean;
 }
 
@@ -33,9 +34,9 @@ var cache_updateIndex: number = 0;
 var cache_updateTotal: number = 0;
 var statusUpdateCallback: any = undefined;
 
-export function newCache(queries: string[]): void {
+export function newCache(options: PS_Update_Options): void {
     cache = new PS_Cache();
-    buildUpdateList(queries);
+    buildUpdateList(options);
 }
 
 export async function loadCache(file: File): Promise<void> {
@@ -68,24 +69,32 @@ export function saveCache(): void {
     download.click();
 }
 
-export async function buildUpdateList(queries: string[], options?: PS_Update_Options): Promise<void> {
+export async function buildUpdateList(options: PS_Update_Options): Promise<void> {
+    // Check if cache is initialized
+    if (cache === undefined)
+        return;
+
     // Reset related cache vars
     cache_updateList = new Array();
-    console.log(new Date());
+
+    // Disable fetch button
+    signalStatusUpdateCallback({ disableFetchButton: true });
 
     // Fetch that data!
-    for (let query of queries) {
-        signalStatusUpdateCallback({ log: "Processing query: " + query });
-        await fetchProShopQuery(query, options);
-    }
+    if (options.fetchExternal)
+        for (let query of options.queries) {
+            signalStatusUpdateCallback({ log: "Processing query: " + query });
+            await fetchProShopQuery(query, options);
+        }
 
+    // Does the user want to also search internal cache?
     if (options.fetchInternal) {
         signalStatusUpdateCallback({ log: "Searching internal cache" });
         // Search for applicable work orders in our cache
-        let matches: string[] = cache.getMatchingWorkOrders(options);
+        let matches: string[] = cache.getMatchingUpdateCriteria(options);
         for (let s of matches)
             if (!cache_updateList.includes(s))
-                cache_updateList.push(s);
+                 cache_updateList.push(s);
 
         signalStatusUpdateCallback({ log: "Found " + matches.length + " matching criteria" });
     }    
@@ -117,7 +126,7 @@ export function fetchProShopQuery(query: string, options?: PS_Update_Options): P
                 if (!cache.containsWorkOrder(woList_index))
                     cache_updateList.push(woList_index);
                 else
-                    if (matchesUpdateCriteria(woList_status, options))
+                    if (options.statuses.includes(woList_status))
                         cache_updateList.push(woList_index);
 
                     /*if (cache.containsWorkOrder(woList_index).getStatus() === PS_WorkOrder_Status.ACTIVE ||
@@ -134,9 +143,11 @@ export function fetchProShopQuery(query: string, options?: PS_Update_Options): P
 }
 
 async function updateCache(): Promise<void> {
-    if (!cache_updateList.length)
+    if (!cache_updateList.length) {
+        // We are done updating, re-enable the fetch button
+        signalStatusUpdateCallback({ disableFetchButton: false });
         return;
-    else if (cache_updateList.length === 1) {
+    } else if (cache_updateList.length === 1) {
         await cache.fetchWorkOrder(cache_updateList.pop());
         console.log(new Date());
     } else {
@@ -148,24 +159,6 @@ async function updateCache(): Promise<void> {
         status: getUpdateRemaining() + " remaining",
         percent: cache_updateIndex / cache_updateTotal * 100 
     });
-}
-
-export function matchesUpdateCriteria(status: PS_WorkOrder_Status, options: PS_Update_Options) {
-    if (options.fetchActive && status === PS_WorkOrder_Status.ACTIVE)
-        return true;
-    if (options.fetchMfgCompelete && status === PS_WorkOrder_Status.MANUFACTURING_COMPLETE)
-        return true;
-    if (options.fetchShipped && status === PS_WorkOrder_Status.SHIPPED)
-        return true;
-    if (options.fetchOnHold && status === PS_WorkOrder_Status.ON_HOLD)
-        return true;
-    if (options.fetchCanceled && status === PS_WorkOrder_Status.CANCELED)
-        return true;
-    if (options.fetchComplete && status === PS_WorkOrder_Status.COMPLETE)
-        return true;
-    if (options.fetchInvoiced && status === PS_WorkOrder_Status.INVOICED)
-        return true;
-    return false;
 }
 
 export function setBaseURL(url: string) {
@@ -187,7 +180,14 @@ export function getDataTimestamp(): Date {
 }
 
 export function getMatchingWorkOrders(options: PS_Cache_Filter): PS_WorkOrder[] {
+    // Check if cache is initialized
+    if (cache === undefined)
+        throw Error("Tried to access uninitialized cache");
     return cache.filter(options);
+}
+
+export function isCacheInitialized(): boolean {
+    return cache !== undefined;
 }
 
 export function getUpdateRemaining(): number {
