@@ -1,3 +1,5 @@
+import { PS_Update_Options } from "./ProData";
+
 export enum PS_WorkOrder_Status { ACTIVE = 0, CANCELED, COMPLETE, INVOICED, MANUFACTURING_COMPLETE, ON_HOLD, SHIPPED, UNKNOWN }
 
 export interface PS_WorkOrder_OpRows extends Array<PS_WorkOrder_OpRow>{};
@@ -31,6 +33,18 @@ export class PS_WorkOrder {
                 });
             }
         }
+    }
+
+    matchesUpdateCriteria(options: PS_Update_Options): boolean {
+        if (!options.statuses.includes(this.status))
+            return false;
+
+        for (let row of this.opTable) 
+            for (let machine of options.machines) {
+                if (row.resource.slice(0, machine.length) === machine)
+                    return true;
+            }
+        return false;
     }
 
     // Return first op row that matches op code
