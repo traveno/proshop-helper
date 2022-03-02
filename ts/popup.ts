@@ -74,7 +74,7 @@ generateTag.addEventListener("click", async () => {
 });*/
 
 chrome.management.getSelf((result) => {
-    document.getElementById("ver").innerHTML = "v" + result.version + "\t\t" + "Stephen Fike";
+    document.getElementById("ver").innerHTML = "v" + result.version;
 });
 
 document.getElementById("openCotsSuite").onclick = () => {

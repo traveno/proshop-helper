@@ -4,10 +4,6 @@
     z-index: -1;
 }
 
-.progress {
-    padding: 0;
-}
-
 #logtext {
     overflow: hidden;
     resize: none;

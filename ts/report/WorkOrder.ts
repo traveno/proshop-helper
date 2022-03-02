@@ -41,7 +41,7 @@ export class PS_WorkOrder {
 
         for (let row of this.opTable) 
             for (let machine of options.machines) {
-                if (row.resource.slice(0, machine.length) === machine)
+                if (row.resource.slice(0, machine.length).toLowerCase() === machine.toLocaleLowerCase())
                     return true;
             }
         return false;

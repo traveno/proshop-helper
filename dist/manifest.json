@@ -3,7 +3,7 @@
   "description": "Enhancement package for the ProShop ERP solution.",
   "author": "Stephen Fike",
   "version": "4.2.5",
-  "version_name": "4.2.5",
+  "version_name": "4.2.5-alpha",
   "manifest_version": 3,
   "background": {
     "service_worker": "./js/background.js"
