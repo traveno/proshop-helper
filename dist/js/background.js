@@ -65,11 +65,11 @@ function debug(file, info) {
 chrome.runtime.onInstalled.addListener(function(info) {
     if (info.reason == "install") {
         chrome.storage.local.set({ enabled: true });
-        chrome.storage.local.set({ perm_cots: true, perm_parts: true, perm_reporting: true });
+        chrome.storage.local.set({ perm_cots: false, perm_parts: false, perm_reporting: false });
         debug("background", "extension installed and enabled");
     } else if (info.reason == "update") {
         chrome.storage.local.set({ enabled: true });
-        chrome.storage.local.set({ perm_cots: true, perm_parts: true, perm_reporting: true });
+        chrome.storage.local.set({ perm_cots: false, perm_parts: false, perm_reporting: false });
         debug("background", "extension updated");
     }
 });
