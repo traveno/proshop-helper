@@ -204,7 +204,7 @@ function deptDataToTable(tableBody: JQuery<HTMLElement>, dept: string, count: nu
     for (let i = 1; i <= count; i++) {
         let resource = single ? dept : dept + i.toString();
         tableBody.append(`
-        <tr data-toggle="collapse" data-target="#demo` + resource + `" role="button">
+        <tr>
             <th scope="row">` + resource + `</th>
             <td>` + ProData.getMatchingWorkOrders({ resource: resource, status: PS_WorkOrder_Status.ACTIVE }).length + `</td>
             <td>` + ProData.getMatchingWorkOrders({ resource: resource, status: PS_WorkOrder_Status.COMPLETE }).length + `</td>
