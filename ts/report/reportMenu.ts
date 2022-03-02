@@ -15,14 +15,15 @@ $("#cache-input").on("change", function() {
     let reader = new FileReader();
     let file: File = ($(this).get(0) as HTMLInputElement).files[0];
 
-    ProData.loadCache(file);
     ProData.registerStatusUpdateCallback(refreshUI);
+    ProData.loadCache(file);
 });
 
 $("#cache-new").on("click", function() {
 
     $("#cache-status").text("Building...");
 
+    ProData.registerStatusUpdateCallback(refreshUI);
     ProData.newCache();
 });
 
@@ -34,9 +35,13 @@ $('#generate-tables').on('click', function() {
     populateTables();
 });
 
-$('#fetch-all').on('click', function() {
-    // Haas and DM
-    ProData.buildUpdateList(["query56", "query55"]);
+$('#fetch-updates').on('click', function() {
+    let options: ProData.PS_Update_Options = {
+        fetchInvoiced: $("#fetch-invoiced").prop("checked")
+    }
+
+    // All departments
+    ProData.buildUpdateList(["query55", "query56", "query57", "query58", "query59"], options);
 });
 
 export function refreshUI(data: ProData.PS_Status_Update): void {
@@ -45,9 +50,12 @@ export function refreshUI(data: ProData.PS_Status_Update): void {
     }
 
     $("#cache-entries").text(ProData.getNumberOfEntries());
-    $("#cache-timestamp").text(ProData.getDataTimestamp().toString().split("GMT")[0]);
 
-    $("#fetch-progress").css("width",  + "100%");
+    $("#cache-timestamp").text(getSimpleDate(ProData.getDataTimestamp()));
+
+    if (data.percent)
+        $("#fetch-progress").css("width", data.percent.toString() + "%");
+        
     $("#fetch-progress-header").text(data.status);
 
     let cacheStatus = ProData.getCacheStatus();
@@ -66,28 +74,54 @@ export function refreshUI(data: ProData.PS_Status_Update): void {
 }
 
 function populateTables(): void {
-    $('#table-haas').find('tbody').empty();
-    for (let i = 1; i <= 7; i++) {
-        $('#table-haas').find('tbody').append(`
+    deptDataToTable($('#table-haas').find('tbody'), "HAAS", 7);
+    deptDataToTable($('#table-haas').find('tbody'), "ROBO", 1, false, true);
+
+    deptDataToTable($('#table-dmu').find('tbody'), "DMU", 4);
+
+    deptDataToTable($('#table-makino').find('tbody'), "MAK", 7)
+
+    deptDataToTable($('#table-matsuura').find('tbody'), "MAM", 3)
+
+    deptDataToTable($('#table-lathe').find('tbody'), "NL2500",  1, true,  true)
+    deptDataToTable($('#table-lathe').find('tbody'), "NLX2500", 1, false, true)
+    deptDataToTable($('#table-lathe').find('tbody'), "NT1000",  1, false, true)
+    deptDataToTable($('#table-lathe').find('tbody'), "NTX2000", 1, false, true)
+    deptDataToTable($('#table-lathe').find('tbody'), "L2-20",   1, false, true)
+}
+
+function deptDataToTable(tableBody: JQuery<HTMLElement>, dept: string, count: number, clear: boolean = true, single: boolean = false): void {
+    if (clear)
+        tableBody.empty();
+    for (let i = 1; i <= count; i++) {
+        let resource = single ? dept : dept + i.toString();
+        tableBody.append(`
         <tr>
-            <th scope="row">HAAS` + i + `</th>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "HAAS" + i, status: PS_WorkOrder_Status.ACTIVE }).length + `</td>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "HAAS" + i, status: PS_WorkOrder_Status.COMPLETE }).length + `</td>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "HAAS" + i, status: PS_WorkOrder_Status.MANUFACTURING_COMPLETE }).length + `</td>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "HAAS" + i, status: PS_WorkOrder_Status.SHIPPED }).length + `</td>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "HAAS" + i, status: PS_WorkOrder_Status.INVOICED }).length + `</td>
+            <th scope="row">` + resource + `</th>
+            <td>` + ProData.getMatchingWorkOrders({ resource: resource, status: PS_WorkOrder_Status.ACTIVE }).length + `</td>
+            <td>` + ProData.getMatchingWorkOrders({ resource: resource, status: PS_WorkOrder_Status.COMPLETE }).length + `</td>
+            <td>` + ProData.getMatchingWorkOrders({ resource: resource, status: PS_WorkOrder_Status.MANUFACTURING_COMPLETE }).length + `</td>
+            <td>` + ProData.getMatchingWorkOrders({ resource: resource, status: PS_WorkOrder_Status.SHIPPED }).length + `</td>
+            <td>` + ProData.getMatchingWorkOrders({ resource: resource, status: PS_WorkOrder_Status.INVOICED }).length + `</td>
         </tr>
         `)
     }
+}
 
-    $('#table-haas').find('tbody').append(`
-        <tr>
-            <th scope="row">ROBO</th>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "ROBO", status: PS_WorkOrder_Status.ACTIVE }).length + `</td>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "ROBO", status: PS_WorkOrder_Status.COMPLETE }).length + `</td>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "ROBO", status: PS_WorkOrder_Status.MANUFACTURING_COMPLETE }).length + `</td>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "ROBO", status: PS_WorkOrder_Status.SHIPPED }).length + `</td>
-            <td>` + ProData.getMatchingWorkOrders({ op60Resource: "ROBO", status: PS_WorkOrder_Status.INVOICED }).length + `</td>
-        </tr>
-    `)
+function getSimpleDate(time: Date): string {
+    let temp: string = "";
+
+    temp += (time.getMonth() + 1) + "/";
+    temp +=  time.getDate()       + "/";
+    temp +=  time.getFullYear()   + " ";
+    temp +=  time.getHours()      + ":";
+    temp +=  time.getMinutes();
+
+    return temp;
+}
+
+window.onbeforeunload = event => {
+    event.preventDefault();
+    event.returnValue = "Sure?";
+    return;
 }
