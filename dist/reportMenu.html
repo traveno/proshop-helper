@@ -48,7 +48,15 @@
           <div class="row">
             <h3 class="text-center">Fetching Controls</h3>
             <div class="col">
-              <button id="fetch-updates" type="button" class="btn btn-primary">Fetch Updates</button>
+              <form>
+                <fieldset>
+                  <legend>Where</legend>
+                  <input class="form-check-input" type="checkbox" id="fetch-external" checked>
+                  <label class="form-check-label" for="fetch-external">Search ProShop</label><br>
+                  <input class="form-check-input" type="checkbox" id="fetch-internal" checked>
+                  <label class="form-check-label" for="fetch-internal">Search Cache</label>
+                </fieldset>
+              </form>
             </div>
             <div class="col">
               <form>
@@ -84,9 +92,7 @@
                     <input class="form-check-input" type="checkbox" id="fetch-makino" checked>
                     <label class="form-check-label" for="fetch-makino">Makino</label><br>
                     <input class="form-check-input" type="checkbox" id="fetch-lathe" checked>
-                    <label class="form-check-label" for="fetch-lathe">Lathe</label><br><br>
-                    <input class="form-check-input" type="checkbox" id="fetch-internal" checked>
-                    <label class="form-check-label" for="fetch-internal">Internal Cache</label>
+                    <label class="form-check-label" for="fetch-lathe">Lathe</label><br>
                 </fieldset>
               </form>
             </div>
@@ -94,6 +100,7 @@
           <hr>
           <div class="row my-4">
             <div class="col">
+              <button id="fetch-updates" type="button" class="btn btn-primary">Fetch Updates</button>
               <button id="generate-tables" type="button" class="btn btn-primary">Populate Tables</button>
             </div>
           </div>

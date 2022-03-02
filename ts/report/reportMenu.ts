@@ -20,11 +20,47 @@ $("#cache-input").on("change", function() {
 });
 
 $("#cache-new").on("click", function() {
-
     $("#cache-status").text("Building...");
-
     ProData.registerStatusUpdateCallback(refreshUI);
-    ProData.newCache(["query55", "query56", "query57", "query58", "query59"]);
+
+    let options: ProData.PS_Update_Options = {
+        statuses: new Array(),
+        queries: new Array(),
+        machines: new Array(),
+        fetchExternal: $("#fetch-external").prop("checked"),
+        fetchInternal: $("#fetch-internal").prop("checked")
+    };
+
+
+    // Status criteria
+    if ($("#fetch-active").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.ACTIVE);
+    if ($("#fetch-mfgcomplete").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.MANUFACTURING_COMPLETE);
+    if ($("#fetch-shipped").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.SHIPPED);
+    if ($("#fetch-onhold").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.ON_HOLD);
+    if ($("#fetch-canceled").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.CANCELED);
+    if ($("#fetch-invoiced").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.INVOICED);
+    if ($("#fetch-complete").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.COMPLETE);
+
+    // Department criteria
+    if ($("#fetch-haas").prop("checked"))
+        options.queries.push("query56");
+    if ($("#fetch-dmu").prop("checked"))
+        options.queries.push("query55");
+    if ($("#fetch-matsuura").prop("checked"))
+        options.queries.push("query58");
+    if ($("#fetch-makino").prop("checked"))
+        options.queries.push("query57");
+    if ($("#fetch-lathe").prop("checked"))
+        options.queries.push("query59");
+
+    ProData.newCache(options);
     enableCloseDialog();
 });
 
@@ -38,37 +74,73 @@ $('#generate-tables').on('click', function() {
 });
 
 $('#fetch-updates').on('click', function() {
+    // Create our update criteria
     let options: ProData.PS_Update_Options = {
-        // Status
-        fetchActive: $("#fetch-active").prop("checked"),
-        fetchMfgCompelete: $("#fetch-mfgcomplete").prop("checked"),
-        fetchShipped: $("#fetch-shipped").prop("checked"),
-        fetchOnHold: $("#fetch-onhold").prop("checked"),
-        fetchCanceled: $("#fetch-canceled").prop("checked"),
-        fetchComplete: $("#fetch-complete").prop("checked"),
-        fetchInvoiced: $("#fetch-invoiced").prop("checked"),
+        statuses: new Array(),
+        queries: new Array(),
+        machines: new Array(),
+        fetchExternal: $("#fetch-external").prop("checked"),
         fetchInternal: $("#fetch-internal").prop("checked")
+    };
+
+    // Status criteria
+    if ($("#fetch-active").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.ACTIVE);
+    if ($("#fetch-mfgcomplete").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.MANUFACTURING_COMPLETE);
+    if ($("#fetch-shipped").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.SHIPPED);
+    if ($("#fetch-onhold").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.ON_HOLD);
+    if ($("#fetch-canceled").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.CANCELED);
+    if ($("#fetch-invoiced").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.INVOICED);
+    if ($("#fetch-complete").prop("checked"))
+        options.statuses.push(PS_WorkOrder_Status.COMPLETE);
+
+    // Department criteria
+    if ($("#fetch-haas").prop("checked"))
+        options.queries.push("query56");
+    if ($("#fetch-dmu").prop("checked"))
+        options.queries.push("query55");
+    if ($("#fetch-matsuura").prop("checked"))
+        options.queries.push("query58");
+    if ($("#fetch-makino").prop("checked"))
+        options.queries.push("query57");
+    if ($("#fetch-lathe").prop("checked"))
+        options.queries.push("query59");
+
+    // Machine criteria
+    if ($("#fetch-haas").prop("checked"))
+        options.machines.push("HAAS");
+    if ($("#fetch-dmu").prop("checked"))
+        options.machines.push("DMU");
+    if ($("#fetch-matsuura").prop("checked"))
+        options.machines.push("MAM");
+    if ($("#fetch-makino").prop("checked"))
+        options.machines.push("MAK");
+    if ($("#fetch-lathe").prop("checked")) {
+        options.machines.push("NL2500");
+        options.machines.push("NLX2500");
+        options.machines.push("NT1000");
+        options.machines.push("NTX2000");
+        options.machines.push("L2-20");
     }
 
-    let depts: string[] = new Array();
-
-    if ($("#fetch-haas").prop("checked"))
-        depts.push("query56");
-    if ($("#fetch-dmu").prop("checked"))
-        depts.push("query55");
-    if ($("#fetch-matsuura").prop("checked"))
-        depts.push("query58");
-    if ($("#fetch-makino").prop("checked"))
-        depts.push("query57");
-    if ($("#fetch-lathe").prop("checked"))
-        depts.push("query59");
-
-    ProData.buildUpdateList(depts, options);
+    ProData.buildUpdateList(options);
 });
 
 export function refreshUI(data: ProData.PS_Status_Update): void {
     $("#fetch-progress-header").text(data.status);
     populateTables();
+
+    if (data.disableFetchButton !== undefined) {
+        if (data.disableFetchButton)
+            $("#fetch-all").prop("disabled", true);
+        else
+            $("#fetch-all").prop("disabled", false);
+    }
 
     // Only run when the last fetch call returns
     if (ProData.getUpdateRemaining() === 0 && data.status) {
@@ -123,6 +195,10 @@ function populateTables(): void {
 }
 
 function deptDataToTable(tableBody: JQuery<HTMLElement>, dept: string, count: number, clear: boolean = true, single: boolean = false): void {
+    // Check if cache is ready
+    if (!ProData.isCacheInitialized())
+        return;
+
     if (clear)
         tableBody.empty();
     for (let i = 1; i <= count; i++) {
