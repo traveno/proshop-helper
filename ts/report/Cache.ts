@@ -180,7 +180,7 @@ function processOpTable(table: JQuery<HTMLElement>): PS_WorkOrder_OpRows {
             let hour: number = parseInt(temp.split(":")[1].slice(-2));
 
             // Convert 12hr to 24hr
-            if (temp.split(";")[1].slice(-2) === "PM")
+            if (temp.split(";")[1].slice(-2) === "PM" && hour !== 12)
                 hour += 12;
 
             let minute: number = parseInt(temp.split(":")[2]);
