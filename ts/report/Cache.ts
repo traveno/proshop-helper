@@ -5,8 +5,9 @@ import { BASE_URL } from './ProData';
 export enum PS_Cache_Status { EMPTY = 0, OUTDATED, OK, ERROR, UNSAVED_CHANGES }
 
 export interface PS_Cache_Filter {
-    op60Resource?: string,
+    resource?: string,
     status?: PS_WorkOrder_Status
+    upToOp?: number
 }
 
 export class PS_Cache {
@@ -14,13 +15,18 @@ export class PS_Cache {
     private timestamp_save: Date;
     private workorders: PS_WorkOrder[] = new Array();;
 
-    constructor(initFile?: File) {
-        if (initFile) {
+    constructor() {
+        this.timestamp_data = new Date();
+        this.workorders = new Array();
+    }
+
+    loadFromFile(initFile: File): Promise<void> {
+        return new Promise(resolve => {
             let reader = new FileReader();
             reader.readAsText(initFile);
 
-            reader.onloadend = readerEvent => {
-                let content: string = readerEvent.target.result as string;
+            reader.onloadend = event => {
+                let content: string = event.target.result as string;
                 let parse: any = JSON.parse(content);
 
                 // Copy timestamps from file
@@ -28,15 +34,12 @@ export class PS_Cache {
                 this.timestamp_save = new Date(parse.timestamp_save);
 
                 // Bring in all work orders from file
-                this.workorders = new Array();
                 for (let wo of parse.workorders) {
                     this.workorders.push(new PS_WorkOrder(wo));
                 }
+                resolve();
             }
-        } else {
-            this.timestamp_data = new Date();
-            this.workorders = new Array();
-        }
+        });
     }
 
     getStatus(): PS_Cache_Status {
@@ -83,12 +86,9 @@ export class PS_Cache {
                     continue;
                
             // Filter by machine resource (op60) if defined
-            if (options.op60Resource !== undefined)
-                if (wo.getOpTableRow("60") === undefined)
+            if (options.resource !== undefined)
+                if (!wo.containsResource(options.resource))
                     continue;
-                else
-                    if (wo.getOpTableRow("60").resource !== options.op60Resource)
-                        continue;
 
             temp.push(wo);
         }
@@ -121,6 +121,7 @@ export class PS_Cache {
                     this.workorders.splice(this.workorders.indexOf(duplicateFinder), 1);
     
                 this.workorders.push(wo);
+                console.log(wo);
             }).then(() => {
                 if (callback)
                     callback();
@@ -135,7 +136,8 @@ export class PS_Cache {
         console.log("Check for duplicates...");
         for (let wo of this.workorders) {
             for (let test of this.workorders) {
-                if (this.workorders.indexOf(wo) !== this.workorders.indexOf(test)) {
+                if (this.workorders.indexOf(wo) !== this.workorders.indexOf(test) &&
+                    wo == test) {
                     console.log("I found a duplicate! Invalid cache");
                     return false;
                 }
@@ -156,7 +158,7 @@ function processOpTable(table: JQuery<HTMLElement>): PS_WorkOrder_OpRows {
         let rowDesc: string = $(this).find("td:nth-of-type(2)").text();
         let rowResource: string = $(this).find("td:nth-of-type(3)").text()
         let rowComplete: boolean = $(this).find("td:nth-of-type(10) span").hasClass("glyphicon-ok");
-        let rowCompleteDate: Date = null;
+        let rowCompleteDate: Date = undefined;
 
         if (rowComplete) {
             let temp: string = $(this).find("td:nth-of-type(10) span").attr("title");
@@ -164,8 +166,16 @@ function processOpTable(table: JQuery<HTMLElement>): PS_WorkOrder_OpRows {
             let month: number = parseInt(temp.split("/")[0].slice(-2));
             let day: number = parseInt(temp.split("/")[1]);
             let year: number = parseInt(temp.split("/")[2].slice(0, 4));
+            let hour: number = parseInt(temp.split(":")[1].slice(-2));
 
-            rowCompleteDate = new Date(year, month - 1, day);
+            // Convert 12hr to 24hr
+            if (temp.split(";")[1].slice(-2) === "PM")
+                hour += 12;
+
+            let minute: number = parseInt(temp.split(":")[2]);
+            let second: number = parseInt(temp.split(":")[3].slice(0, 2));
+
+            rowCompleteDate = new Date(year, month - 1, day, hour, minute, second);
         }
 
         let temp: PS_WorkOrder_OpRow = {
