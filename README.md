@@ -9,7 +9,7 @@ I am a Chrome extension that adds additional functionality to the ProShop ERP so
  - [x] Standardized individual file names
  - [x] Automated file formatting over entire purchase orders
  - [x] Data extraction from global parts library
- - [ ] Daily report summarizing active work for each department
+ - [x] Daily report summarizing active work for each department
 
 # Building
 
@@ -27,7 +27,11 @@ Then add the plugin to Chrome by navigating to Extensions and enabling Developer
 
 # Quick Overview
 
-![Popup image](https://raw.githubusercontent.com/traveno/proshop-helper/main/.github/popup.png)
+## Reporting Suite
+
+Complete application for gathering data from ProShop to compile reports regarding active work.
+Reports can be compiled using custom filters such as date ranges, status checks, matching departments, etc.
+Highly flexible utility.
 
 ## Work Tag Generation
 
