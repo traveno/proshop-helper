@@ -1,15 +1,25 @@
+import { match } from 'assert';
 import * as $ from 'jquery';
 import { parseStatusToEnum, PS_Cache, PS_Cache_Filter, PS_Cache_Status } from "./Cache"
 import { PS_WorkOrder, PS_WorkOrder_Status } from './WorkOrder';
 
 // Interfaces
 export interface PS_Status_Update {
-    status?: string
+    status?: string;
+    log?: string;
     percent?: number;
 }
 
 export interface PS_Update_Options {
-    fetchInvoiced?: boolean;
+    // Status
+    fetchActive: boolean;
+    fetchMfgCompelete: boolean;
+    fetchShipped: boolean;
+    fetchOnHold: boolean;
+    fetchCanceled: boolean;
+    fetchComplete: boolean;
+    fetchInvoiced: boolean;
+    fetchInternal: boolean;
 }
 
 // Constants
@@ -23,18 +33,20 @@ var cache_updateIndex: number = 0;
 var cache_updateTotal: number = 0;
 var statusUpdateCallback: any = undefined;
 
-export function newCache(): void {
+export function newCache(queries: string[]): void {
     cache = new PS_Cache();
-
-    // Haas and DMU
-    buildUpdateList(["query55", "query56", "query57", "query58", "query59"]);
+    buildUpdateList(queries);
 }
 
 export async function loadCache(file: File): Promise<void> {
     cache = new PS_Cache();
     await cache.loadFromFile(file);
-    cache.verify();
-    signalStatusUpdateCallback({ status: "Imported cache" });
+    signalStatusUpdateCallback({ log: "Imported cache" });
+
+    if (cache.verify())
+        signalStatusUpdateCallback({ log: "Cache passed all checks" });
+    else
+        signalStatusUpdateCallback({ log: "ERROR: Cache failed integrity test" });
 }
 
 export function saveCache(): void {
@@ -45,13 +57,14 @@ export function saveCache(): void {
 
     cache.updateSaveTimestamp();
 
-    console.log("Saving cache");
+    signalStatusUpdateCallback({ log: "Saving cache" });
 
-    const data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cache, null, 2));
+    const data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cache));
+    const date: Date = new Date();
 
     let download = document.createElement("a");
     download.setAttribute("href", data);
-    download.setAttribute("download", "cache_" + new Date() + ".pro_cache");
+    download.setAttribute("download", getSaveFileDate() + ".pro_cache");
     download.click();
 }
 
@@ -62,10 +75,20 @@ export async function buildUpdateList(queries: string[], options?: PS_Update_Opt
 
     // Fetch that data!
     for (let query of queries) {
-        console.log("Processing query: " + query);
-        signalStatusUpdateCallback({ status: "Running " + query });
-        await fetchProShopQuery(query);
+        signalStatusUpdateCallback({ log: "Processing query: " + query });
+        await fetchProShopQuery(query, options);
     }
+
+    if (options.fetchInternal) {
+        signalStatusUpdateCallback({ log: "Searching internal cache" });
+        // Search for applicable work orders in our cache
+        let matches: string[] = cache.getMatchingWorkOrders(options);
+        for (let s of matches)
+            if (!cache_updateList.includes(s))
+                cache_updateList.push(s);
+
+        signalStatusUpdateCallback({ log: "Found " + matches.length + " matching criteria" });
+    }    
 
     cache_updateTotal = cache_updateList.length;
     cache_updateIndex = 0;
@@ -77,7 +100,7 @@ export async function buildUpdateList(queries: string[], options?: PS_Update_Opt
     cache.updateDataTimestamp();
 }
 
-export function fetchProShopQuery(query: string): Promise<boolean> {
+export function fetchProShopQuery(query: string, options?: PS_Update_Options): Promise<boolean> {
     return new Promise(resolve => {
         fetch(BASE_URL + "/procnc/workorders/searchresults$queryScope=global&queryName=" + query + "&pName=workorders").then(res => res.text()).then(html => {
             let parser: DOMParser = new DOMParser();
@@ -94,8 +117,7 @@ export function fetchProShopQuery(query: string): Promise<boolean> {
                 if (!cache.containsWorkOrder(woList_index))
                     cache_updateList.push(woList_index);
                 else
-                    if (woList_status !== PS_WorkOrder_Status.INVOICED && woList_status !== PS_WorkOrder_Status.COMPLETE &&
-                        woList_status !== PS_WorkOrder_Status.CANCELED)
+                    if (matchesUpdateCriteria(woList_status, options))
                         cache_updateList.push(woList_index);
 
                     /*if (cache.containsWorkOrder(woList_index).getStatus() === PS_WorkOrder_Status.ACTIVE ||
@@ -103,8 +125,8 @@ export function fetchProShopQuery(query: string): Promise<boolean> {
                         cache_updateList.push(woList_index);*/
             });
     
-            console.log("Found " + woList.length + " entries for " + query);
-            console.log("Found " + (cache_updateList.length - temp) + " active entries to fetch");
+            signalStatusUpdateCallback({ log: "Found " + woList.length + " entries for " + query });
+            signalStatusUpdateCallback({ log: "Found " + (cache_updateList.length - temp) + " matching criteria" });
         }).then(() => {
             resolve(true);
         });
@@ -123,9 +145,27 @@ async function updateCache(): Promise<void> {
 
     cache_updateIndex++;
     signalStatusUpdateCallback({
-        status: getUpdateRemaining() + " remaining...",
+        status: getUpdateRemaining() + " remaining",
         percent: cache_updateIndex / cache_updateTotal * 100 
     });
+}
+
+export function matchesUpdateCriteria(status: PS_WorkOrder_Status, options: PS_Update_Options) {
+    if (options.fetchActive && status === PS_WorkOrder_Status.ACTIVE)
+        return true;
+    if (options.fetchMfgCompelete && status === PS_WorkOrder_Status.MANUFACTURING_COMPLETE)
+        return true;
+    if (options.fetchShipped && status === PS_WorkOrder_Status.SHIPPED)
+        return true;
+    if (options.fetchOnHold && status === PS_WorkOrder_Status.ON_HOLD)
+        return true;
+    if (options.fetchCanceled && status === PS_WorkOrder_Status.CANCELED)
+        return true;
+    if (options.fetchComplete && status === PS_WorkOrder_Status.COMPLETE)
+        return true;
+    if (options.fetchInvoiced && status === PS_WorkOrder_Status.INVOICED)
+        return true;
+    return false;
 }
 
 export function setBaseURL(url: string) {
@@ -161,4 +201,17 @@ export function registerStatusUpdateCallback(callback: any) {
 function signalStatusUpdateCallback(data: PS_Status_Update): void {
     if (statusUpdateCallback !== undefined)
         statusUpdateCallback(data);
+}
+
+function getSaveFileDate(): string {
+    const date = new Date();
+    let temp: string = "";
+
+    temp += date.getFullYear()    + "-";
+    temp += (date.getMonth() + 1) + "-";
+    temp += date.getDate()        + " ";
+    temp += date.getHours()       + "-";
+    temp += date.getMinutes();
+
+    return temp;
 }
