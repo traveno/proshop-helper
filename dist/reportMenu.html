@@ -18,7 +18,6 @@
           </div>
           <div class="row mb-4 align-items-center">
             <div class="col">
-              
               <input type="file" id="cache-input" name="Load cache file"></input>
               <div class="btn-group" role="group">
                 <label for="cache-input" class="btn btn-primary">Load</label>
@@ -30,7 +29,7 @@
               <table>
                 <tbody>
                   <tr>
-                    <th scope="row" class="text-end">Cache Status:</th>
+                    <th scope="row" class="text-end">Status:</th>
                     <td class="text-start"><span id="cache-status"></span></td>
                   </tr>
                   <tr>
@@ -45,19 +44,18 @@
               </table>
             </div>
           </div>
+          <hr>
           <div class="row">
             <h3 class="text-center">Fetching Controls</h3>
             <div class="col">
-              
-              <button id="fetch-all" type="button" class="btn btn-primary">Fetch Updates</button>
-              
+              <button id="fetch-updates" type="button" class="btn btn-primary">Fetch Updates</button>
             </div>
             <div class="col">
               <form>
-                <fieldset class="fetching-controls" disabled>
+                <fieldset class="fetching-controls">
                   <legend>Options</legend>
-                    <input class="form-check-input" type="checkbox" id="fetch-completed">
-                    <label class="form-check-label" for="disabledFieldsetCheck">Fetch Completed</label>
+                    <input class="form-check-input" type="checkbox" id="fetch-invoiced">
+                    <label class="form-check-label" for="fetch-invoiced">Fetch Invoiced</label>
                 </fieldset>
               </form>
               
@@ -68,6 +66,7 @@
               <button id="generate-tables" type="button" class="btn btn-primary">Populate Tables</button>
             </div>
           </div>
+          <hr>
           <div class="row">
             <h4 class="text-center" id="fetch-progress-header">Idle</h4>
             <div class="progress">
@@ -94,6 +93,8 @@
                 <a href="#lathe" class="nav-link" data-bs-toggle="tab">Lathe</a>
               </li>
             </ul>
+            <br><br>
+            <hr>
             <div class="tab-content">
               <div class="tab-pane fade show active" id="haas">
                 <table class="table table-striped table-hover" id="table-haas">
