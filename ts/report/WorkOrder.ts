@@ -7,6 +7,7 @@ export interface PS_WorkOrder_OpRow {
     resource: string,
     complete: boolean,
     completeDate?: Date;
+
 }
 
 export class PS_WorkOrder {
@@ -18,13 +19,31 @@ export class PS_WorkOrder {
         if (copy) {
             this.index = copy.index;
             this.status = copy.status;
-            this.opTable = copy.opTable;
+            this.opTable = new Array();
+
+            for (let row of copy.opTable) {
+                this.opTable.push({
+                    op: row.op,
+                    opDesc: row.opDesc,
+                    resource: row.resource,
+                    complete: row.complete,
+                    completeDate: row.completeDate !== undefined ? new Date(row.completeDate) : undefined
+                });
+            }
         }
     }
 
     // Return first op row that matches op code
     getOpTableRow(opCode: string): PS_WorkOrder_OpRow {
         return this.opTable.find(elem => elem.op === opCode);
+    }
+
+    containsResource(resource: string): boolean {
+        for (let row of this.opTable) {
+            if (row.resource.toLowerCase() === resource.trim().toLowerCase())
+                return true;
+        }
+        return false;
     }
 
     getStatus(): PS_WorkOrder_Status {
