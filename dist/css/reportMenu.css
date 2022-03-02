@@ -7,3 +7,8 @@
 .progress {
     padding: 0;
 }
+
+#logtext {
+    overflow: hidden;
+    resize: none;
+}

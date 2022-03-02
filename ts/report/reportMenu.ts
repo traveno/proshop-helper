@@ -5,7 +5,6 @@ import { PS_Cache_Status } from "./Cache";
 import * as ProData from "./ProData";
 import { PS_WorkOrder_Status } from "./WorkOrder";
 
-
 chrome.storage.local.get(["ps_url"], function(result) {
     if (result.ps_url != undefined)
         ProData.setBaseURL(result.ps_url);
@@ -17,6 +16,7 @@ $("#cache-input").on("change", function() {
 
     ProData.registerStatusUpdateCallback(refreshUI);
     ProData.loadCache(file);
+    enableCloseDialog();
 });
 
 $("#cache-new").on("click", function() {
@@ -24,11 +24,13 @@ $("#cache-new").on("click", function() {
     $("#cache-status").text("Building...");
 
     ProData.registerStatusUpdateCallback(refreshUI);
-    ProData.newCache();
+    ProData.newCache(["query55", "query56", "query57", "query58", "query59"]);
+    enableCloseDialog();
 });
 
 $("#cache-save").on("click", function() {
     ProData.saveCache();
+    enableCloseDialog();
 });
 
 $('#generate-tables').on('click', function() {
@@ -37,26 +39,56 @@ $('#generate-tables').on('click', function() {
 
 $('#fetch-updates').on('click', function() {
     let options: ProData.PS_Update_Options = {
-        fetchInvoiced: $("#fetch-invoiced").prop("checked")
+        // Status
+        fetchActive: $("#fetch-active").prop("checked"),
+        fetchMfgCompelete: $("#fetch-mfgcomplete").prop("checked"),
+        fetchShipped: $("#fetch-shipped").prop("checked"),
+        fetchOnHold: $("#fetch-onhold").prop("checked"),
+        fetchCanceled: $("#fetch-canceled").prop("checked"),
+        fetchComplete: $("#fetch-complete").prop("checked"),
+        fetchInvoiced: $("#fetch-invoiced").prop("checked"),
+        fetchInternal: $("#fetch-internal").prop("checked")
     }
 
-    // All departments
-    ProData.buildUpdateList(["query55", "query56", "query57", "query58", "query59"], options);
+    let depts: string[] = new Array();
+
+    if ($("#fetch-haas").prop("checked"))
+        depts.push("query56");
+    if ($("#fetch-dmu").prop("checked"))
+        depts.push("query55");
+    if ($("#fetch-matsuura").prop("checked"))
+        depts.push("query58");
+    if ($("#fetch-makino").prop("checked"))
+        depts.push("query57");
+    if ($("#fetch-lathe").prop("checked"))
+        depts.push("query59");
+
+    ProData.buildUpdateList(depts, options);
 });
 
 export function refreshUI(data: ProData.PS_Status_Update): void {
-    if (ProData.getUpdateRemaining() === 0) {
+    $("#fetch-progress-header").text(data.status);
+    populateTables();
+
+    // Only run when the last fetch call returns
+    if (ProData.getUpdateRemaining() === 0 && data.status) {
         populateTables();
+        $("#fetch-progress-header").text("Idle");
+        log("Update complete");
     }
 
     $("#cache-entries").text(ProData.getNumberOfEntries());
-
     $("#cache-timestamp").text(getSimpleDate(ProData.getDataTimestamp()));
 
     if (data.percent)
-        $("#fetch-progress").css("width", data.percent.toString() + "%");
-        
-    $("#fetch-progress-header").text(data.status);
+        if (data.percent === 100)
+            $("#fetch-progress").css("width", "0%");
+        else
+            $("#fetch-progress").css("width", data.percent.toString() + "%");
+
+    // Add data to the log
+    if (data.log)
+        log(data.log);
 
     let cacheStatus = ProData.getCacheStatus();
     if      (cacheStatus === PS_Cache_Status.EMPTY)
@@ -120,8 +152,16 @@ function getSimpleDate(time: Date): string {
     return temp;
 }
 
-window.onbeforeunload = event => {
-    event.preventDefault();
-    event.returnValue = "Sure?";
-    return;
+function enableCloseDialog() {
+    window.onbeforeunload = event => {
+        event.preventDefault();
+        event.returnValue = "Sure?";
+        return;
+    }
+}
+
+function log(info: string) {
+    let log: JQuery<HTMLFormElement> = $("#logtext");
+    log.val($("#logtext").val() + info + "\r\n");
+    log.get(0).scrollTop = log.get(0).scrollHeight;
 }
