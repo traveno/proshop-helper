@@ -35,7 +35,7 @@ export class PS_Cache {
 
                 // Bring in all work orders from file
                 for (let wo of parse.workorders) {
-                    this.workorders.push(new PS_WorkOrder(wo));
+                    this.workorders.push(new PS_WorkOrder(wo.index, wo.status, wo.opTable));
                 }
                 resolve();
             }
@@ -118,13 +118,10 @@ export class PS_Cache {
                 let doc: Document = parser.parseFromString(html, "text/html");
     
                 let wo_Status: string = $(doc).find("#horizontalMainAtts_status_value").text();
-                let opTable: JQuery<HTMLElement> = $(doc).find("table.proshop-table").eq(5);
+                let routingTable: JQuery<HTMLElement> = $(doc).find("table.proshop-table").eq(5);
     
-                let wo: PS_WorkOrder = new PS_WorkOrder({
-                    index: index,
-                    status: parseStatusToEnum(wo_Status),
-                    opTable: processOpTable(opTable)
-                } as PS_WorkOrder);
+                let wo: PS_WorkOrder = new PS_WorkOrder(index, parseStatusToEnum(wo_Status));
+                wo.parseRoutingTable(routingTable);
     
                 // If this already exists in our cache, delete old and insert new
                 let duplicateFinder = this.workorders.find(elem => elem.index === wo.index);

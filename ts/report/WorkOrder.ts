@@ -1,3 +1,4 @@
+import * as $ from "jquery"
 import { PS_Update_Options } from "./ProData";
 
 export enum PS_WorkOrder_Status { ACTIVE = 0, CANCELED, COMPLETE, INVOICED, MANUFACTURING_COMPLETE, ON_HOLD, SHIPPED, UNKNOWN }
@@ -9,22 +10,26 @@ export interface PS_WorkOrder_OpRow {
     resource: string,
     complete: boolean,
     completeDate?: Date;
+}
+
+export interface PS_WorkOrder_TrackingRow {
 
 }
 
 export class PS_WorkOrder {
     index: string;
     status: PS_WorkOrder_Status;
-    opTable: PS_WorkOrder_OpRows;
+    routingTable: PS_WorkOrder_OpRows;
+    trackingTable
 
-    constructor(copy?: PS_WorkOrder) {
-        if (copy) {
-            this.index = copy.index;
-            this.status = copy.status;
-            this.opTable = new Array();
+    constructor(index: string, status: PS_WorkOrder_Status, routingTable?: PS_WorkOrder_OpRows) {
+        this.index = index;
+        this.status = status;
+        this.routingTable = new Array();
 
-            for (let row of copy.opTable) {
-                this.opTable.push({
+        if (routingTable)
+            for (let row of routingTable) {
+                this.routingTable.push({
                     op: row.op,
                     opDesc: row.opDesc,
                     resource: row.resource,
@@ -32,10 +37,9 @@ export class PS_WorkOrder {
                     completeDate: row.completeDate !== undefined ? new Date(row.completeDate) : undefined
                 });
             }
-        }
     }
 
-    processOpTable(table: JQuery<HTMLElement>): PS_WorkOrder_OpRows {
+    parseRoutingTable(table: JQuery<HTMLElement>): boolean {
         let tableRows: JQuery<HTMLElement> = $(table).find("tbody tr");
         let result: PS_WorkOrder_OpRows = new Array();
     
@@ -57,6 +61,9 @@ export class PS_WorkOrder {
                 // Convert 12hr to 24hr
                 if (temp.split(";")[1].slice(-2) === "PM" && hour !== 12)
                     hour += 12;
+
+                if (temp.split(";")[1].slice(-2) === "AM" && hour === 12)
+                    hour -= 12;
     
                 let minute: number = parseInt(temp.split(":")[2]);
                 let second: number = parseInt(temp.split(":")[3].slice(0, 2));
@@ -73,14 +80,15 @@ export class PS_WorkOrder {
             }
             result.push(temp);
         });
-        return result;
+        this.routingTable = result;
+        return true;
     }
 
     matchesUpdateCriteria(options: PS_Update_Options): boolean {
         if (!options.statuses.includes(this.status))
             return false;
 
-        for (let row of this.opTable) 
+        for (let row of this.routingTable) 
             for (let machine of options.machines) {
                 if (row.resource.slice(0, machine.length).toLowerCase() === machine.toLocaleLowerCase())
                     return true;
@@ -90,11 +98,11 @@ export class PS_WorkOrder {
 
     // Return first op row that matches op code
     getOpTableRow(opCode: string): PS_WorkOrder_OpRow {
-        return this.opTable.find(elem => elem.op === opCode);
+        return this.routingTable.find(elem => elem.op === opCode);
     }
 
     containsResource(resource: string): boolean {
-        for (let row of this.opTable) {
+        for (let row of this.routingTable) {
             if (row.resource.toLowerCase() === resource.trim().toLowerCase())
                 return true;
         }
