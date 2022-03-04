@@ -124,7 +124,7 @@ export function fetchProShopQuery(query: string, options?: PS_Update_Options): P
                 let woList_status: PS_WorkOrder_Status = parseStatusToEnum($(this).find("td:nth-of-type(10)").text());
     
                 if (!cache.containsWorkOrder(woList_index))
-                    cache_updateList.push(woList_index);
+                     cache_updateList.push(woList_index);
                 else
                     if (options.statuses.includes(woList_status))
                         cache_updateList.push(woList_index);

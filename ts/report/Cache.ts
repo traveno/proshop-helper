@@ -124,7 +124,7 @@ export class PS_Cache {
                     index: index,
                     status: parseStatusToEnum(wo_Status),
                     opTable: processOpTable(opTable)
-                });
+                } as PS_WorkOrder);
     
                 // If this already exists in our cache, delete old and insert new
                 let duplicateFinder = this.workorders.find(elem => elem.index === wo.index);
