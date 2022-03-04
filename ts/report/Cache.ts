@@ -157,49 +157,6 @@ export class PS_Cache {
     }
 }
 
-function processOpTable(table: JQuery<HTMLElement>): PS_WorkOrder_OpRows {
-    let tableRows: JQuery<HTMLElement> = $(table).find("tbody tr");
-    let result: PS_WorkOrder_OpRows = new Array();
-
-    $(tableRows).each(function() {
-        let rowOp: string = $(this).find("td:first-of-type > a").text();
-        let rowDesc: string = $(this).find("td:nth-of-type(2)").text();
-        let rowResource: string = $(this).find("td:nth-of-type(3)").text()
-        let rowComplete: boolean = $(this).find("td:nth-of-type(10) span").hasClass("glyphicon-ok");
-        let rowCompleteDate: Date = undefined;
-
-        if (rowComplete) {
-            let temp: string = $(this).find("td:nth-of-type(10) span").attr("title");
-
-            let month: number = parseInt(temp.split("/")[0].slice(-2));
-            let day: number = parseInt(temp.split("/")[1]);
-            let year: number = parseInt(temp.split("/")[2].slice(0, 4));
-            let hour: number = parseInt(temp.split(":")[1].slice(-2));
-
-            // Convert 12hr to 24hr
-            if (temp.split(";")[1].slice(-2) === "PM" && hour !== 12)
-                hour += 12;
-
-            let minute: number = parseInt(temp.split(":")[2]);
-            let second: number = parseInt(temp.split(":")[3].slice(0, 2));
-
-            rowCompleteDate = new Date(year, month - 1, day, hour, minute, second);
-        }
-
-        let temp: PS_WorkOrder_OpRow = {
-            op: rowOp,
-            opDesc: rowDesc,
-            resource: rowResource,
-            complete: rowComplete,
-            completeDate: rowCompleteDate
-        }
-        
-        result.push(temp);
-    });
-
-    return result;
-}
-
 export function parseStatusToEnum(inputString: string): PS_WorkOrder_Status {
     let inputStringCleaned: string = inputString.trim().toLowerCase();
 
