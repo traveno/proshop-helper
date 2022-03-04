@@ -39,7 +39,7 @@ export class PS_WorkOrder {
             }
     }
 
-    parseRoutingTable(table: JQuery<HTMLElement>): boolean {
+    parseRoutingTable(table: JQuery<HTMLElement>): void {
         let tableRows: JQuery<HTMLElement> = $(table).find("tbody tr");
         let result: PS_WorkOrder_OpRows = new Array();
     
@@ -57,6 +57,8 @@ export class PS_WorkOrder {
                 let day: number = parseInt(temp.split("/")[1]);
                 let year: number = parseInt(temp.split("/")[2].slice(0, 4));
                 let hour: number = parseInt(temp.split(":")[1].slice(-2));
+                let minute: number = parseInt(temp.split(":")[2]);
+                let second: number = parseInt(temp.split(":")[3].slice(0, 2));
     
                 // Convert 12hr to 24hr
                 if (temp.split(";")[1].slice(-2) === "PM" && hour !== 12)
@@ -65,23 +67,21 @@ export class PS_WorkOrder {
                 if (temp.split(";")[1].slice(-2) === "AM" && hour === 12)
                     hour -= 12;
     
-                let minute: number = parseInt(temp.split(":")[2]);
-                let second: number = parseInt(temp.split(":")[3].slice(0, 2));
-    
                 rowCompleteDate = new Date(year, month - 1, day, hour, minute, second);
             }
-    
-            let temp: PS_WorkOrder_OpRow = {
+
+            // Can't access class members from within jQuery loop
+            result.push({
                 op: rowOp,
                 opDesc: rowDesc,
                 resource: rowResource,
                 complete: rowComplete,
                 completeDate: rowCompleteDate
-            }
-            result.push(temp);
+            });
         });
+
+        // Apply our new routing table to this work order
         this.routingTable = result;
-        return true;
     }
 
     matchesUpdateCriteria(options: PS_Update_Options): boolean {
@@ -97,7 +97,7 @@ export class PS_WorkOrder {
     }
 
     // Return first op row that matches op code
-    getOpTableRow(opCode: string): PS_WorkOrder_OpRow {
+    getRoutingTableRow(opCode: string): PS_WorkOrder_OpRow {
         return this.routingTable.find(elem => elem.op === opCode);
     }
 
