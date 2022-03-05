@@ -54,10 +54,11 @@ async function renameFile(href: string, msDelay: number) {
         let editFileDoc = parser.parseFromString(html, "text/html");
 
         // Find the file name text box on the rename page
+        var filepath: JQuery<HTMLElement> = $(editFileDoc).find("form#linkEditForm input").eq(1);
         let filename: JQuery<HTMLElement> = $(editFileDoc).find("form#linkEditForm input").eq(2);
 
         // Give the text box a new value that is pretty
-        $(filename).val(makePretty($(filename).val() as string));
+        $(filename).val(makePretty($(filepath).val() as string));
 
         // Take a snapshot of the completed form ready for submit
         const data: URLSearchParams = new URLSearchParams(new FormData(editFileDoc.getElementById("linkEditForm") as HTMLFormElement) as URLSearchParams);

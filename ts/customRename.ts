@@ -14,7 +14,7 @@ function renameFile(): void {
     var filename: JQuery<HTMLElement> = $("form#linkEditForm input").eq(2);
 
     // Obtain the current value in the input field
-    let text: string = $(filename).val() as string;
+    let text: string = $(filepath).val() as string;
 
     // Check if it's empty, or if we've already prettified the text
     if (text == "" || text.includes("PO") || text.includes("PS"))
