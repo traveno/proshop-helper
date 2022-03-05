@@ -1,5 +1,5 @@
 import * as $ from "jquery"
-import { PS_Update_Options } from "./ProData";
+import { BASE_URL, PS_Update_Options } from "./ProData";
 
 export enum PS_WorkOrder_Status { ACTIVE = 0, CANCELED, COMPLETE, INVOICED, MANUFACTURING_COMPLETE, ON_HOLD, SHIPPED, UNKNOWN }
 
@@ -18,16 +18,17 @@ export interface PS_WorkOrder_TrackingRow {
 
 export class PS_WorkOrder {
     index: string;
-    status: PS_WorkOrder_Status;
+    status: PS_WorkOrder_Status = PS_WorkOrder_Status.UNKNOWN;
     routingTable: PS_WorkOrder_OpRows;
-    trackingTable
 
-    constructor(index: string, status: PS_WorkOrder_Status, routingTable?: PS_WorkOrder_OpRows) {
+    constructor(index: string, status?: PS_WorkOrder_Status, routingTable?: PS_WorkOrder_OpRows) {
         this.index = index;
-        this.status = status;
         this.routingTable = new Array();
 
-        if (routingTable)
+        if (status !== undefined)
+            this.status = status;
+
+        if (routingTable !== undefined)
             for (let row of routingTable) {
                 this.routingTable.push({
                     op: row.op,
@@ -37,6 +38,25 @@ export class PS_WorkOrder {
                     completeDate: row.completeDate !== undefined ? new Date(row.completeDate) : undefined
                 });
             }
+    }
+
+    fetch(): Promise<void> {
+        return new Promise(resolve => {
+            fetch(BASE_URL + "/procnc/workorders/" + this.index).then(res => res.text()).then(html => {
+                let parser: DOMParser = new DOMParser();
+                let doc: Document = parser.parseFromString(html, "text/html");
+    
+                let status: string = $(doc).find("#horizontalMainAtts_status_value").text();
+                let routingTable: JQuery<HTMLElement> = $(doc).find("table.proshop-table").eq(5);
+    
+                this.setStatusFromString(status);
+                this.parseRoutingTable(routingTable);
+
+                console.log(this);
+            }).then(() => {
+                resolve();
+            });
+        });
     }
 
     parseRoutingTable(table: JQuery<HTMLElement>): void {

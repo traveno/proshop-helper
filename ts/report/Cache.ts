@@ -35,7 +35,7 @@ export class PS_Cache {
 
                 // Bring in all work orders from file
                 for (let wo of parse.workorders) {
-                    this.workorders.push(new PS_WorkOrder(wo.index, wo.status, wo.opTable));
+                    this.workorders.push(new PS_WorkOrder(wo.index, wo.status, wo.routingTable));
                 }
                 resolve();
             }
@@ -106,38 +106,22 @@ export class PS_Cache {
         return temp;
     }
 
-    fetchWorkOrder(index: string, callback?: any): Promise<void> {
-        return new Promise(resolve => {
-            if (index === undefined) {
-                console.log("null index");
-                resolve();
-            }
+    async fetchWorkOrder(index: string, callback?: any): Promise<void> {
+        // If this already exists in our cache, fetch new data
+        let duplicateFinder = this.workorders.find(elem => elem.index === index);
+        if (duplicateFinder !== undefined) {
+            this.workorders.splice(this.workorders.indexOf(duplicateFinder), 1);
+        }
 
-            fetch(BASE_URL + "/procnc/workorders/" + index).then(handleFetchErrors).then(res => res.text()).then(html => {
-                let parser: DOMParser = new DOMParser();
-                let doc: Document = parser.parseFromString(html, "text/html");
+        let wo: PS_WorkOrder = new PS_WorkOrder(index);
+        await wo.fetch();
+
+
+        this.workorders.push(wo);
+        console.log(wo);
     
-                let wo_Status: string = $(doc).find("#horizontalMainAtts_status_value").text();
-                let routingTable: JQuery<HTMLElement> = $(doc).find("table.proshop-table").eq(5);
-    
-                let wo: PS_WorkOrder = new PS_WorkOrder(index, parseStatusToEnum(wo_Status));
-                wo.parseRoutingTable(routingTable);
-    
-                // If this already exists in our cache, delete old and insert new
-                let duplicateFinder = this.workorders.find(elem => elem.index === wo.index);
-                if (duplicateFinder !== undefined) 
-                    this.workorders.splice(this.workorders.indexOf(duplicateFinder), 1);
-    
-                this.workorders.push(wo);
-                console.log(wo);
-            }).then(() => {
-                if (callback)
-                    callback();
-                resolve();
-            }).catch(error => {
-                console.log(error); 
-            });
-        });
+        if (callback)
+            callback();
     }
 
     verify(): boolean {
@@ -156,28 +140,6 @@ export class PS_Cache {
         return true;
     }
 }
-
-export function parseStatusToEnum(inputString: string): PS_WorkOrder_Status {
-    let inputStringCleaned: string = inputString.trim().toLowerCase();
-
-    if (inputStringCleaned === 'active')
-        return PS_WorkOrder_Status.ACTIVE;
-    else if (inputStringCleaned === 'cancelled')
-        return PS_WorkOrder_Status.CANCELED;
-    else if (inputStringCleaned === 'complete')
-        return PS_WorkOrder_Status.COMPLETE;
-    else if (inputStringCleaned === 'invoiced')
-        return PS_WorkOrder_Status.INVOICED;
-    else if (inputStringCleaned === 'manufacturing complete')
-        return PS_WorkOrder_Status.MANUFACTURING_COMPLETE;
-    else if (inputStringCleaned === 'on hold')
-        return PS_WorkOrder_Status.ON_HOLD;
-    else if (inputStringCleaned === 'shipped')
-        return PS_WorkOrder_Status.SHIPPED;
-    else 
-        return PS_WorkOrder_Status.UNKNOWN;
-}
-
 
 function handleFetchErrors(response) {
     if (!response.ok)

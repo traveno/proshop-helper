@@ -1,6 +1,5 @@
-import { match } from 'assert';
 import * as $ from 'jquery';
-import { parseStatusToEnum, PS_Cache, PS_Cache_Filter, PS_Cache_Status } from "./Cache"
+import { PS_Cache, PS_Cache_Filter, PS_Cache_Status } from "./Cache"
 import { PS_WorkOrder, PS_WorkOrder_Status } from './WorkOrder';
 
 // Interfaces
@@ -214,4 +213,25 @@ function getSaveFileDate(): string {
     temp += date.getMinutes();
 
     return temp;
+}
+
+function parseStatusToEnum(inputString: string): PS_WorkOrder_Status {
+    let inputStringCleaned: string = inputString.trim().toLowerCase();
+
+    if (inputStringCleaned === 'active')
+        return PS_WorkOrder_Status.ACTIVE;
+    else if (inputStringCleaned === 'cancelled')
+        return PS_WorkOrder_Status.CANCELED;
+    else if (inputStringCleaned === 'complete')
+        return PS_WorkOrder_Status.COMPLETE;
+    else if (inputStringCleaned === 'invoiced')
+        return PS_WorkOrder_Status.INVOICED;
+    else if (inputStringCleaned === 'manufacturing complete')
+        return PS_WorkOrder_Status.MANUFACTURING_COMPLETE;
+    else if (inputStringCleaned === 'on hold')
+        return PS_WorkOrder_Status.ON_HOLD;
+    else if (inputStringCleaned === 'shipped')
+        return PS_WorkOrder_Status.SHIPPED;
+    else 
+        return PS_WorkOrder_Status.UNKNOWN;
 }
