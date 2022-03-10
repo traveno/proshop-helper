@@ -46,7 +46,7 @@ chrome.runtime.onMessage.addListener(
         debug(request.file, request.info);
     }
 
-    Promise.resolve("").then(result => sendResponse(result));
+    Promise.resolve().then(result => sendResponse(result));
     return true;
 });
 

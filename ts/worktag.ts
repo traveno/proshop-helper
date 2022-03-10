@@ -17,6 +17,9 @@ chrome.runtime.onMessage.addListener(
                 port.postMessage({ type: "executePayload" });
             }
         }
+
+    Promise.resolve().then(result => sendResponse(result));
+    return true;
 });
 
 function processPort(message) {
