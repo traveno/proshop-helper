@@ -161,7 +161,7 @@ async function scrapeDataFromPart(href: string, msDelay: number) {
 function addToCSV(data: string): void {
     numPartsProcessed++;
     $("#status").text("Processed " + numPartsProcessed + " of " + numParts + "...");
-    csvContent += data;
+    csvContent += data + "\n";
 
     console.log(data);
 
