@@ -45,6 +45,9 @@ chrome.runtime.onMessage.addListener(
     if (request.type == "debug") {
         debug(request.file, request.info);
     }
+
+    Promise.resolve("").then(result => sendResponse(result));
+    return true;
 });
 
 function delay(ms) {

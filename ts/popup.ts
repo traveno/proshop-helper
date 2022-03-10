@@ -77,17 +77,17 @@ chrome.management.getSelf((result) => {
     document.getElementById("ver").innerHTML = "v" + result.version;
 });
 
-document.getElementById("openCotsSuite").onclick = () => {
+$("#openCotsSuite").on("click", () => {
     chrome.runtime.sendMessage({ type: "openCotsMenu" });
     window.close();
-}
+});
 
-document.getElementById("openPartsSuite").onclick = () => {
+$("#openPartsSuite").on("click", () => {
     chrome.runtime.sendMessage({ type: "openPartsMenu" });
     window.close();
-}
+});
 
-document.getElementById("openReporting").onclick = () => {
+$("#openReporting").on("click", () => {
     chrome.runtime.sendMessage({ type: "openReportMenu" });
     window.close();
-}
+});
