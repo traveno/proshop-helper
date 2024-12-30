@@ -2,8 +2,8 @@
   "name": "ProShop Helper",
   "description": "Enhancement package for the ProShop ERP solution.",
   "author": "Stephen Fike",
-  "version": "4.2.9",
-  "version_name": "4.2.9",
+  "version": "4.2.10",
+  "version_name": "4.2.10",
   "manifest_version": 3,
   "background": {
     "service_worker": "./js/background.js"
