@@ -1,6 +1,6 @@
 import * as $ from "jquery";
 
-var username: JQuery<HTMLElement> = $("span.user_name");
+var username: JQuery<HTMLElement> = $("li#user-link span");
 
 if (username.length) {
     if (username.text() === 'STEPHEN F') {
