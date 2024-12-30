@@ -2,6 +2,8 @@
 
 ![Release workflow](https://github.com/traveno/proshop-helper/actions/workflows/node.js.release.yml/badge.svg) ![Pre-Release workflow](https://github.com/traveno/proshop-helper/actions/workflows/node.js.pre-release.yml/badge.svg)
 
+This project is now *maintenance* only. I now have my BSc and am employed working on other, bigger projects! SF 12/30/24
+
 I am a Chrome extension that adds additional functionality to the ProShop ERP solution. Current features include:
 
  - [x] Robust work tag generation tailored for raw materials
@@ -50,7 +52,7 @@ Relevant files: `partsMenu.ts`
 ## Standardized File Renaming
 
 Purchase orders now have the option to bulk rename all applicable pack lists to a standard format.
-Renaming individial files has also been added to the rename file dialog.
+Renaming individual files has also been added to the rename file dialog.
 
 Relevant files: `customPO.ts`, `customRename.ts`
 
@@ -62,4 +64,6 @@ Relevant files: `customCots.ts`, `cotsMenu.ts`, `cotstag.ts`
 
 # Future Plans
  
-Ideas have been discussed such as simplified file uploading and machine generated COTS tags. I plan to have these implemented by the end of Q1 2022.
+~~Ideas have been discussed such as simplified file uploading and machine generated COTS tags. I plan to have these implemented by the end of Q1 2022.~~
+
+No future plans. See note at top of readme.
